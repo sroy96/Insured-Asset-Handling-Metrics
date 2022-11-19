@@ -6,4 +6,6 @@
 package com.acko.insuredassetcredibility.interfaces;
 
 public interface ApplicationService {
+
+
 }
