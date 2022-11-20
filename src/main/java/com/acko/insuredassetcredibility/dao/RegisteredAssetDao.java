@@ -1,26 +1,22 @@
 /**
  * @author saurav roy
- * Date:20/11/22
- * Time:4:40 PM
+ * Date:21/11/22
+ * Time:12:35 AM
  */
 package com.acko.insuredassetcredibility.dao;
 
 import com.acko.insuredassetcredibility.enums.FuelType;
 import com.acko.insuredassetcredibility.enums.TransmissionType;
 import com.acko.insuredassetcredibility.models.Insurance;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Document
-public class VehicleDao {
+public class RegisteredAssetDao {
     @Id
     private String assetId;
     private Date ServicingDate;
@@ -35,5 +31,4 @@ public class VehicleDao {
     private Double brandValueIndia;
     private TransmissionType transmissionType;
     private FuelType fuelType;
-
 }
