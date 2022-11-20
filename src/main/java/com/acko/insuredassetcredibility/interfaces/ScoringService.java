@@ -5,5 +5,12 @@
  */
 package com.acko.insuredassetcredibility.interfaces;
 
-public interface ScoringService {
+public interface ScoringService<T> {
+    Double calculateScore(String assetId);
+
+    Double getScore(String assetId);
+
+    Double calculateKeyFactorDelta(String assetId);
+
+    T getActivityDetails(String assetId);
 }

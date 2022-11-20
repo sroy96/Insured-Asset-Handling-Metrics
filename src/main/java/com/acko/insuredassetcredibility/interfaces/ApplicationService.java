@@ -5,7 +5,11 @@
  */
 package com.acko.insuredassetcredibility.interfaces;
 
+import com.acko.insuredassetcredibility.dto.requests.AssetScoringRequest;
+import com.acko.insuredassetcredibility.dto.responses.AssetScoringResponse;
+
 public interface ApplicationService {
 
+    AssetScoringResponse getAssetScoringDetails(AssetScoringRequest assetScoringRequest);
 
 }
