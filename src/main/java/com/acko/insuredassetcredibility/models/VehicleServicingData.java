@@ -21,6 +21,7 @@ import java.util.Date;
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class VehicleServicingData {
     private Date engineOilChangeDate;
+    private Double lastMileage;
     private Date headLightRepairDate;
     private ServicingStatus headLightCondition;
     private Date brakeLightRepairDate;
