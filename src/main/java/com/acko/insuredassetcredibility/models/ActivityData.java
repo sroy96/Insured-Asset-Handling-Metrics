@@ -18,7 +18,10 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
+/**
+ * for activity history use
+ * 2109 format
+ */
 public class ActivityData {
-    private String activityId;
-    Map<Integer, String> activityHistory;
+    private String activity;
 }

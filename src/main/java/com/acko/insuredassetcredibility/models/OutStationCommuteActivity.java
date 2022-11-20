@@ -1,7 +1,7 @@
 /**
  * @author saurav roy
  * Date:20/11/22
- * Time:12:01 AM
+ * Time:4:38 PM
  */
 package com.acko.insuredassetcredibility.models;
 
@@ -16,9 +16,6 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class AssetScores {
-    private String assetId;
-    private Double score;
-    private KeyActivities keyActivities;
-    private KeyFactorsDelta keyFactorsDelta;
+public class OutStationCommuteActivity extends ActivityData{
+    private Double approximateOutStationDistanceCovered;
 }

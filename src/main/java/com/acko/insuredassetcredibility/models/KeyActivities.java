@@ -5,6 +5,7 @@
  */
 package com.acko.insuredassetcredibility.models;
 
+import com.acko.insuredassetcredibility.enums.ActivityType;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
@@ -18,5 +19,5 @@ import java.util.Map;
 @AllArgsConstructor
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class KeyActivities {
-    private Map<String, ActivityData> keyActivities;
+    private Map<ActivityType, ActivityData> keyActivities;
 }
