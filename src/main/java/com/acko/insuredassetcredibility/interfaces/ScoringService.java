@@ -6,9 +6,9 @@
 package com.acko.insuredassetcredibility.interfaces;
 
 public interface ScoringService<T> {
-    Double calculateScore(String assetId);
+    Integer calculateScore(String assetId);
 
-    Double getScore(String assetId);
+    Integer getScore(String assetId);
 
     Double calculateKeyFactorDelta(String assetId);
 
