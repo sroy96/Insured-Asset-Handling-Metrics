@@ -17,5 +17,6 @@ import java.util.Date;
 @Data
 @Builder
 public class BaseEventData {
-    Date eventDate;
+    String name;
+    Date date;
 }
