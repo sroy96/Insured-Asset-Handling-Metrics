@@ -1,6 +1,6 @@
 package com.acko.insuredassetcredibility.dao;
 
-import com.acko.insuredassetcredibility.interfaces.VehicleRepairDao;
+import com.acko.insuredassetcredibility.dao.interfaces.VehicleRepairDao;
 import com.acko.insuredassetcredibility.models.VehicleRepair;
 import lombok.Data;
 
