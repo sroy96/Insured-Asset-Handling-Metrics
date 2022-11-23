@@ -1,6 +1,6 @@
 package com.acko.insuredassetcredibility.dao;
 
-import com.acko.insuredassetcredibility.interfaces.VehicleMaintenanceConditionDao;
+import com.acko.insuredassetcredibility.dao.interfaces.VehicleMaintenanceConditionDao;
 import com.acko.insuredassetcredibility.models.VehicleMaintenanceCondition;
 import lombok.Data;
 
