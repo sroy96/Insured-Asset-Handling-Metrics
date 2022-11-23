@@ -5,11 +5,17 @@
  */
 package com.acko.insuredassetcredibility.interfaces;
 
-import com.acko.insuredassetcredibility.dto.requests.AssetScoringRequest;
-import com.acko.insuredassetcredibility.dto.responses.AssetScoringResponse;
+import com.acko.insuredassetcredibility.dao.ScoreDao;
+import com.acko.insuredassetcredibility.models.KeyActivities;
+import com.acko.insuredassetcredibility.models.KeyFactorDataScore;
+import com.acko.insuredassetcredibility.models.KeyFactorsData;
+
+import java.util.List;
 
 public interface ApplicationService {
 
-    AssetScoringResponse getAssetScoringDetails(AssetScoringRequest assetScoringRequest);
+    List<KeyActivities>getActivities(String assetId, ScoreDao scoreDao);
+    List<KeyFactorDataScore>getKeyFactorData(String assetId, ScoreDao scoreDao);
+
 
 }
