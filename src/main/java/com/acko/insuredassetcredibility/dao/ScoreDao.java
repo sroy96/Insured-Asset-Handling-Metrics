@@ -6,11 +6,14 @@
 package com.acko.insuredassetcredibility.dao;
 
 import com.acko.insuredassetcredibility.enums.KeyFactors;
+import com.acko.insuredassetcredibility.models.KeyActivities;
+import com.acko.insuredassetcredibility.models.KeyFactorsData;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 @Data
@@ -21,5 +24,7 @@ public class ScoreDao {
     Double score;
     Map<KeyFactors, Double> keyFactorScores;
     Date refreshDate;
+    List<KeyActivities> activitiesList;
+    List<KeyFactorsData>keyFactorsData;
 
 }
