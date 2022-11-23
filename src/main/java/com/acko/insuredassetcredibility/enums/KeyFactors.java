@@ -10,10 +10,9 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Getter
-public enum ActivityType {
+public enum KeyFactors {
     CHALLAN,
-    OUTSTATION_DISTANCE,
-    AVG_MONTHLY_ODOMETER,
+    DISTANCE_COMMUTED,
     SERVICING,
     CLAIMS,
     FIR
