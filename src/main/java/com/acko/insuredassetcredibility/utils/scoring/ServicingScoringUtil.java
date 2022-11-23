@@ -6,16 +6,17 @@
 package com.acko.insuredassetcredibility.utils.scoring;
 
 import com.acko.insuredassetcredibility.constants.AppConstants;
-import com.acko.insuredassetcredibility.enums.ServicingStatus;
+import com.acko.insuredassetcredibility.dao.ScoreDao;
+import com.acko.insuredassetcredibility.enums.*;
 import com.acko.insuredassetcredibility.interfaces.ScoringService;
 import com.acko.insuredassetcredibility.dao.interfaces.VehicleAccidentDao;
 import com.acko.insuredassetcredibility.dao.interfaces.VehicleMaintenanceConditionDao;
 import com.acko.insuredassetcredibility.dao.interfaces.VehicleRepairDao;
-import com.acko.insuredassetcredibility.models.VehicleAccident;
-import com.acko.insuredassetcredibility.models.VehicleMaintenanceCondition;
-import com.acko.insuredassetcredibility.models.VehicleRepair;
+import com.acko.insuredassetcredibility.models.*;
+import jdk.jfr.Event;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -32,11 +33,19 @@ public class ServicingScoringUtil implements ScoringService {
     @Autowired
     private VehicleMaintenanceConditionDao vehicleMaintenanceConditionDao;
 
+    @Autowired
+    private KeyFactorDataScore keyFactorDataScore;
+
+    @Autowired
+    private KeyActivities keyActivities;
+
     @Override
     public Integer calculateScore(String assetId) {
+        return null;
+    }
 
+    private Integer calculateServiceActivityScore(String assetId, int originalVehicleServicingScore) {
         Date currDate = new Date();
-        int originalVehicleServicingScore = getScore(assetId);
         int scoreFactor = originalVehicleServicingScore / AppConstants.VEHICLE_SERVICING_FACTOR_COUNT;
         int initialAccidentScore = scoreFactor;
         int initialRepairScore = scoreFactor;
@@ -270,13 +279,44 @@ public class ServicingScoringUtil implements ScoringService {
     }
 
     @Override
-    public Double calculateKeyFactorDelta(String assetId) {
-        return null;
+    public KeyFactorDataScore calculateKeyFactor(String assetId, ScoreDao scoreDao) {
+
+        Integer lastUpdatedScore = scoreDao.getKeyFactorScores().get(KeyFactors.SERVICING);
+        Integer currScore = calculateServiceActivityScore(assetId, lastUpdatedScore);
+        Integer deltaConstraint = lastUpdatedScore - currScore;
+
+        String delta = "";
+        if (deltaConstraint > 0) {
+            delta = "+".concat(deltaConstraint.toString());
+        } else delta = deltaConstraint.toString();
+
+        KeyFactorsData keyFactorsData = new KeyFactorsData();
+        keyFactorsData.setImpactType(ImpactType.LOW);
+        keyFactorsData.setUsageCategory(ImpactCategory.EXCELLENT);
+        keyFactorsData.setDelta(delta);
+        keyFactorsData.setDescriptions("Description");
+
+        keyFactorDataScore.setKeyFactorsData(keyFactorsData);
+        keyFactorDataScore.setScore(currScore);
+
+        return keyFactorDataScore;
     }
 
 
     @Override
-    public Object getActivityDetails(String assetId) {
-        return null;
+    public KeyActivities getActivityDetails(String assetId) {
+
+        EventData accidentEvent = new EventData();
+        accidentEvent.setEventName(Events.ACCIDENT.getEventName());
+        //accidentEvent.setData();
+        //accidentEvent.setCount();
+
+        List<EventData> events = new ArrayList<>();
+        events.add(accidentEvent);
+        keyActivities.setEvents(events);
+        keyActivities.setActivityName(Activities.SERVICING.getActivityId());
+
+
+        return keyActivities;
     }
 }
