@@ -23,5 +23,5 @@ import java.util.List;
 public class EventData implements Serializable {
     private Integer count;
     private String eventName;
-    private List<? extends BaseEventData> data;
+    private List<BaseEventData> data;
 }
