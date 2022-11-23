@@ -1,4 +1,4 @@
-package com.acko.insuredassetcredibility.interfaces;
+package com.acko.insuredassetcredibility.dao.interfaces;
 
 import com.acko.insuredassetcredibility.models.VehicleAccident;
 
