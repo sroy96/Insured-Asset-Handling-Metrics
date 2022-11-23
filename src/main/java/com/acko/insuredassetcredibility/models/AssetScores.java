@@ -23,6 +23,7 @@ import java.util.Map;
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class AssetScores {
     private String assetId;
+    private String assetName;
     private Double score;
     private List<KeyActivities> keyActivities;
     private List<KeyFactorsData> keyFactorsData;
