@@ -5,12 +5,14 @@
  */
 package com.acko.insuredassetcredibility.models;
 
-import com.acko.insuredassetcredibility.enums.ActivityType;
 import com.acko.insuredassetcredibility.enums.ImpactCategory;
 import com.acko.insuredassetcredibility.enums.ImpactType;
+import com.acko.insuredassetcredibility.enums.KeyFactors;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
+
+import java.util.Map;
 
 @Data
 @Builder
@@ -19,10 +21,12 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class KeyFactorsDelta {
-    private ActivityType keyFactor;
+public class KeyFactorsData {
     private ImpactType impactType;
     private Double impactValue;
-    private ImpactCategory impactCategory;
+    private ImpactCategory usageCategory;
     private String descriptions;
+    private String unitOfMeasurement;
+    private String delta;
+    private Integer total;
 }
