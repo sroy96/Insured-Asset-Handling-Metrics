@@ -17,19 +17,21 @@ import com.acko.insuredassetcredibility.models.KeyActivities;
 import com.acko.insuredassetcredibility.models.KeyFactorDataScore;
 import com.acko.insuredassetcredibility.models.KeyFactorsData;
 import com.acko.insuredassetcredibility.repository.RegisteredAssetRepository;
+import com.acko.insuredassetcredibility.repository.ScoringDataRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Slf4j
 public class ApplicationServiceImpl implements ApplicationService {
     @Autowired
     private RegisteredAssetRepository repository;
+
+    @Autowired
+    ScoringDataRepository scoringDataRepository;
 
 
     public AssetScoringResponse getAssetScoringDetails(AssetScoringRequest assetScoringRequest) {
@@ -38,8 +40,11 @@ public class ApplicationServiceImpl implements ApplicationService {
         for(RegisteredAssetDao assetDao: registeredAssetList){
             String assetId = assetDao.getAssetId();
             AssetScores assetScores =  new AssetScores();
+            assetScores.setAssetName(assetDao.getMake() +"-" + assetDao.getModel());
             assetScores.setAssetId(assetId);
-            assetScores.setScore();
+            ScoreDao scoreDao = scoringDataRepository.findScoreDaosByAssetId(assetId);
+            assetScores.setKeyActivities(this.getActivities(assetId,scoreDao));
+            assetScores.setKeyFactorsData(this.getKeyFactorData(assetId,scoreDao));
 
 
         }
@@ -49,7 +54,9 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public List<KeyActivities> getActivities(String assetId, ScoreDao scoreDao) {
-        return null;
+        List<KeyActivities>keyActivities = new ArrayList<>();
+        keyActivities.add(new DistanceServiceImpl().getActivities(assetId,scoreDao).get(0));
+        return keyActivities;
     }
 
     @Override
