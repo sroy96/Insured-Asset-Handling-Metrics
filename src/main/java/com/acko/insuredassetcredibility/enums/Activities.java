@@ -16,9 +16,9 @@ public enum Activities {
     SERVICING("service"),
     ODOMETER_READING("odometre");
 
-    private String activity_id;
+    private String activityId;
 
-    Activities(String activity_id) {
-        this.activity_id = activity_id;
+    Activities(String activityId) {
+        this.activityId = activityId;
     }
 }
