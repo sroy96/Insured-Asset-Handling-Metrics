@@ -21,8 +21,8 @@ import java.util.Map;
 public class ScoreDao {
     @Id
     String assetId;
-    Double  score;
-    Map<KeyFactors, Double> keyFactorScores;
+    Integer  score;
+    Map<KeyFactors, Integer> keyFactorScores;
     LocalDateTime refreshDate;
     List<KeyActivities> activitiesList;
     List<KeyFactorsData> keyFactorsData;

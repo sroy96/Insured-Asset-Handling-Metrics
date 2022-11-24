@@ -7,19 +7,18 @@ package com.acko.insuredassetcredibility.utils.scoring;
 
 import com.acko.insuredassetcredibility.constants.AppConstants;
 import com.acko.insuredassetcredibility.dao.ScoreDao;
-import com.acko.insuredassetcredibility.enums.*;
-import com.acko.insuredassetcredibility.interfaces.ScoringService;
 import com.acko.insuredassetcredibility.dao.interfaces.VehicleAccidentDao;
 import com.acko.insuredassetcredibility.dao.interfaces.VehicleMaintenanceConditionDao;
 import com.acko.insuredassetcredibility.dao.interfaces.VehicleRepairDao;
+import com.acko.insuredassetcredibility.enums.*;
+import com.acko.insuredassetcredibility.interfaces.ScoringService;
 import com.acko.insuredassetcredibility.models.*;
-import jdk.jfr.Event;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class ServicingScoringUtil implements ScoringService {
@@ -45,7 +44,7 @@ public class ServicingScoringUtil implements ScoringService {
     }
 
     private Integer calculateServiceActivityScore(String assetId, int originalVehicleServicingScore) {
-        Date currDate = new Date();
+        LocalDateTime currDate = LocalDateTime.now();
         int scoreFactor = originalVehicleServicingScore / AppConstants.VEHICLE_SERVICING_FACTOR_COUNT;
         int initialAccidentScore = scoreFactor;
         int initialRepairScore = scoreFactor;
@@ -58,7 +57,7 @@ public class ServicingScoringUtil implements ScoringService {
         return Math.min(originalVehicleServicingScore, (vehicleAccidentScore + vehicleRepairScore + vehicleMaintenanceConditionScore));
     }
 
-    private Integer getVehicleAccidentScore(String assetId, int initialAccidentScore, Date currDate) {
+    private Integer getVehicleAccidentScore(String assetId, int initialAccidentScore, LocalDateTime currDate) {
 
         int modifiedAccidentScore = initialAccidentScore;
         List<VehicleAccident> vehicleAccident = vehicleAccidentDao.getVehicleAccident(assetId).stream().filter(
@@ -74,7 +73,7 @@ public class ServicingScoringUtil implements ScoringService {
         return modifiedAccidentScore;
     }
 
-    private Integer getVehicleRepairScore(String assetId, int initialRepairScore, Date currDate) {
+    private Integer getVehicleRepairScore(String assetId, int initialRepairScore, LocalDateTime currDate) {
 
         int modifiedRepairScore = initialRepairScore;
         List<VehicleRepair> vehicleRepair = vehicleRepairDao.getVehicleRepair(assetId).stream().filter(
@@ -97,7 +96,7 @@ public class ServicingScoringUtil implements ScoringService {
         for (VehicleRepair repairData : vehicleRepair) {
 
             if (repairData.getEngineOilChangeDate() != null) {
-                if (noOfTimesEngineOilChanged < 1 && TimeUnit.MILLISECONDS.toDays(currDate.getTime() - repairData.getEngineOilChangeDate().getTime()) % 365 >= 30) {
+                if (noOfTimesEngineOilChanged < 1 && ChronoUnit.DAYS.between(currDate, repairData.getEngineOilChangeDate()) >= 30) {
 
                     modifiedRepairScore = modifiedRepairScore + 2;
                     noOfTimesEngineOilChanged++;
@@ -107,7 +106,7 @@ public class ServicingScoringUtil implements ScoringService {
                 }
             }
             if (repairData.getRightTurnSignalLightRepairDate() != null) {
-                if (noOfTimesRightTurnSignalLightRepaired < 1 && TimeUnit.MILLISECONDS.toDays(currDate.getTime() - repairData.getRightTurnSignalLightRepairDate().getTime()) % 365 >= 30) {
+                if (noOfTimesRightTurnSignalLightRepaired < 1 && ChronoUnit.DAYS.between(currDate, repairData.getRightTurnSignalLightRepairDate()) >= 30) {
 
                     modifiedRepairScore = modifiedRepairScore + 2;
                     noOfTimesRightTurnSignalLightRepaired++;
@@ -117,7 +116,7 @@ public class ServicingScoringUtil implements ScoringService {
                 }
             }
             if (repairData.getTransmissionRepairDate() != null) {
-                if (noOfTimesTransmissionRepaired < 1 && TimeUnit.MILLISECONDS.toDays(currDate.getTime() - repairData.getTransmissionRepairDate().getTime()) % 365 >= 30) {
+                if (noOfTimesTransmissionRepaired < 1 && ChronoUnit.DAYS.between(currDate, repairData.getTransmissionRepairDate()) >= 30) {
 
                     modifiedRepairScore = modifiedRepairScore + 2;
                     noOfTimesTransmissionRepaired++;
@@ -127,7 +126,7 @@ public class ServicingScoringUtil implements ScoringService {
                 }
             }
             if (repairData.getAirFilterRepairDate() != null) {
-                if (noOfTimesAirFilterRepaired < 1 && TimeUnit.MILLISECONDS.toDays(currDate.getTime() - repairData.getAirFilterRepairDate().getTime()) % 365 >= 30) {
+                if (noOfTimesAirFilterRepaired < 1 && ChronoUnit.DAYS.between(currDate, repairData.getAirFilterRepairDate()) >= 30) {
 
                     modifiedRepairScore = modifiedRepairScore + 2;
                     noOfTimesAirFilterRepaired++;
@@ -137,7 +136,7 @@ public class ServicingScoringUtil implements ScoringService {
                 }
             }
             if (repairData.getSparkPlugRepairDate() != null) {
-                if (noOfTimesSparkPlugRepaired < 1 && TimeUnit.MILLISECONDS.toDays(currDate.getTime() - repairData.getSparkPlugRepairDate().getTime()) % 365 >= 30) {
+                if (noOfTimesSparkPlugRepaired < 1 && ChronoUnit.DAYS.between(currDate, repairData.getSparkPlugRepairDate()) >= 30) {
 
                     modifiedRepairScore = modifiedRepairScore + 2;
                     noOfTimesSparkPlugRepaired++;
@@ -147,7 +146,7 @@ public class ServicingScoringUtil implements ScoringService {
                 }
             }
             if (repairData.getShockAbsorbersRepairDate() != null) {
-                if (noOfTimesShockAbsorbersRepaired < 1 && TimeUnit.MILLISECONDS.toDays(currDate.getTime() - repairData.getShockAbsorbersRepairDate().getTime()) % 365 >= 30) {
+                if (noOfTimesShockAbsorbersRepaired < 1 && ChronoUnit.DAYS.between(currDate, repairData.getShockAbsorbersRepairDate()) >= 30) {
 
                     modifiedRepairScore = modifiedRepairScore + 2;
                     noOfTimesShockAbsorbersRepaired++;
@@ -157,7 +156,7 @@ public class ServicingScoringUtil implements ScoringService {
                 }
             }
             if (repairData.getBatteryChangedDate() != null) {
-                if (noOfTimesBatteryChanged < 1 && TimeUnit.MILLISECONDS.toDays(currDate.getTime() - repairData.getBatteryChangedDate().getTime()) % 365 >= 30) {
+                if (noOfTimesBatteryChanged < 1 && ChronoUnit.DAYS.between(currDate, repairData.getBatteryChangedDate()) >= 30) {
 
                     modifiedRepairScore = modifiedRepairScore + 2;
                     noOfTimesBatteryChanged++;
@@ -167,7 +166,7 @@ public class ServicingScoringUtil implements ScoringService {
                 }
             }
             if (repairData.getWindShieldWiperChangeDate() != null) {
-                if (noOfTimesWindShieldWiperChanged < 1 && TimeUnit.MILLISECONDS.toDays(currDate.getTime() - repairData.getWindShieldWiperChangeDate().getTime()) % 365 >= 30) {
+                if (noOfTimesWindShieldWiperChanged < 1 && ChronoUnit.DAYS.between(currDate, repairData.getWindShieldWiperChangeDate()) >= 30) {
 
                     modifiedRepairScore = modifiedRepairScore + 2;
                     noOfTimesWindShieldWiperChanged++;
@@ -177,7 +176,7 @@ public class ServicingScoringUtil implements ScoringService {
                 }
             }
             if (repairData.getParkingLightRepairDate() != null) {
-                if (noOfTimesParkingLightRepaired < 1 && TimeUnit.MILLISECONDS.toDays(currDate.getTime() - repairData.getParkingLightRepairDate().getTime()) % 365 >= 30) {
+                if (noOfTimesParkingLightRepaired < 1 && ChronoUnit.DAYS.between(currDate, repairData.getParkingLightRepairDate()) >= 30) {
 
                     modifiedRepairScore = modifiedRepairScore + 2;
                     noOfTimesParkingLightRepaired++;
@@ -187,7 +186,7 @@ public class ServicingScoringUtil implements ScoringService {
                 }
             }
             if (repairData.getBrakeLightRepairDate() != null) {
-                if (noOfTimesBrakeLightRepaired < 1 && TimeUnit.MILLISECONDS.toDays(currDate.getTime() - repairData.getBrakeLightRepairDate().getTime()) % 365 >= 30) {
+                if (noOfTimesBrakeLightRepaired < 1 && ChronoUnit.DAYS.between(currDate, repairData.getBrakeLightRepairDate()) >= 30) {
 
                     modifiedRepairScore = modifiedRepairScore + 2;
                     noOfTimesBrakeLightRepaired++;
@@ -197,7 +196,7 @@ public class ServicingScoringUtil implements ScoringService {
                 }
             }
             if (repairData.getHeadLightRepairDate() != null) {
-                if (noOfTimesHeadLightRepaired < 1 && TimeUnit.MILLISECONDS.toDays(currDate.getTime() - repairData.getHeadLightRepairDate().getTime()) % 365 >= 30) {
+                if (noOfTimesHeadLightRepaired < 1 && ChronoUnit.DAYS.between(currDate, repairData.getHeadLightRepairDate()) >= 30) {
 
                     modifiedRepairScore = modifiedRepairScore + 2;
                     noOfTimesHeadLightRepaired++;
@@ -207,7 +206,7 @@ public class ServicingScoringUtil implements ScoringService {
                 }
             }
             if (repairData.getLeftTurnSignalLightRepairDate() != null) {
-                if (noOfTimesLeftTurnSignalLightRepaired < 1 && TimeUnit.MILLISECONDS.toDays(currDate.getTime() - repairData.getLeftTurnSignalLightRepairDate().getTime()) % 365 >= 30) {
+                if (noOfTimesLeftTurnSignalLightRepaired < 1 && ChronoUnit.DAYS.between(currDate, repairData.getLeftTurnSignalLightRepairDate()) >= 30) {
 
                     modifiedRepairScore = modifiedRepairScore + 2;
                     noOfTimesLeftTurnSignalLightRepaired++;
@@ -279,11 +278,6 @@ public class ServicingScoringUtil implements ScoringService {
     }
 
     @Override
-    public Double calculateDelta(String assetId) {
-        return null;
-    }
-
-    @Override
     public KeyFactorDataScore calculateKeyFactor(String assetId, ScoreDao scoreDao) {
 
         Integer lastUpdatedScore = scoreDao.getKeyFactorScores().get(KeyFactors.SERVICING);
@@ -299,8 +293,6 @@ public class ServicingScoringUtil implements ScoringService {
         keyFactorsData.setImpactType(ImpactType.LOW);
         keyFactorsData.setUsageCategory(ImpactCategory.EXCELLENT);
         keyFactorsData.setDelta(delta);
-        keyFactorsData.setDescriptions("Description");
-
         keyFactorDataScore.setKeyFactorsData(keyFactorsData);
         keyFactorDataScore.setScore(currScore);
 
@@ -323,5 +315,9 @@ public class ServicingScoringUtil implements ScoringService {
 
 
         return keyActivities;
+    }
+
+    private Integer calculateDelta(String assetId) {
+        return null;
     }
 }
