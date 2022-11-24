@@ -17,6 +17,6 @@ public class ServiceUtils {
                 DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
         LocalDateTime now = LocalDateTime.now();
-        return now.plusDays(AppConstants.REFRESH_PERIOD);
+        return now.minusDays(AppConstants.REFRESH_PERIOD);
     }
 }

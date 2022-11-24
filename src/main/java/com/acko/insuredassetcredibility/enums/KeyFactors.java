@@ -14,11 +14,11 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @AllArgsConstructor
 public enum KeyFactors {
-    CHALLAN("challan",0.2),
-    DISTANCE_COMMUTED("distance_commute",0.2),
-    SERVICING("servicing",0.2),
-    CLAIMS("claims",0.2),
-    FIR("FIR",0.2);
+    CHALLAN("challan",0.3),
+    DISTANCE_COMMUTED("distance_commute",0.6),
+    SERVICING("servicing",0.1),
+    CLAIMS("claims",0.0),
+    FIR("FIR",0.0);
 
     private String keyFactorsValue;
     private Double weightage;

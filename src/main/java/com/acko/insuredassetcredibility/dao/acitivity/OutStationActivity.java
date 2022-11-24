@@ -18,8 +18,8 @@ import java.util.List;
 @Document
 public class OutStationActivity {
     @Id
+    private String Id;
     private String assetId;
-    private String eventName;
     private String tollId;
     private Integer tollAmount;
     private Double longitude;

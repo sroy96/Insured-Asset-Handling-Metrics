@@ -58,13 +58,13 @@ public class ApplicationServiceImpl implements ApplicationService {
             assetScores.setAssetName(assetDao.getMake() +"-" + assetDao.getModel());
             assetScores.setAssetId(assetId);
             ScoreDao scoreDao = scoringDataRepository.findScoreDaosByAssetId(assetId);
-            if (!Objects.isNull(scoreDao) &&  ChronoUnit.MINUTES.between(scoreDao.getRefreshDate(), LocalDateTime.now()) < AppConstants.REFRESH_PERIOD_MINUTES) {
-                assetScores.setScore(scoreDao.getScore());
-                assetScores.setKeyActivities(scoreDao.getActivitiesList());
-                assetScores.setKeyFactorsData(scoreDao.getKeyFactorsData());
-                assetScoresList.add(assetScores);
-                continue;
-            }
+//            if (!Objects.isNull(scoreDao) &&  ChronoUnit.MINUTES.between(scoreDao.getRefreshDate(), LocalDateTime.now()) < AppConstants.REFRESH_PERIOD_MINUTES) {
+//                assetScores.setScore(scoreDao.getScore());
+//                assetScores.setKeyActivities(scoreDao.getActivitiesList());
+//                assetScores.setKeyFactorsData(scoreDao.getKeyFactorsData());
+//                assetScoresList.add(assetScores);
+//                continue;
+//            }
 
             List<KeyActivities> keyActivitiesList =this.getActivities(assetId,scoreDao);
             List<KeyFactorDataScore> keyFactorDataScores = this.getKeyFactorData(assetId,scoreDao);
@@ -80,6 +80,11 @@ public class ApplicationServiceImpl implements ApplicationService {
                 keyFactorScores.put(dataScore.getKeyFactorsData().getKeyFactor(),dataScore.getScore());
                 finalScore = finalScore + dataScore.getScore() * dataScore.getKeyFactorsData().getKeyFactor().getWeightage();
             }
+            finalScore = (int)finalScore;
+            if(finalScore<300){
+                finalScore=300;
+            }
+            finalScore = Math.min(1000,finalScore);
             scoreDao.setKeyFactorsData(keyFactorsData);
             assetScores.setKeyFactorsData(keyFactorsData);
             assetScores.setScore((int)finalScore);
@@ -98,8 +103,10 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public List<KeyActivities> getActivities(String assetId, ScoreDao scoreDao) {
         List<KeyActivities>keyActivities = new ArrayList<>();
-//        keyActivities.addAll(distanceService.getActivities(assetId,scoreDao));
+        //keyActivities.addAll(maintenanceService.getActivities(assetId,scoreDao));
+
         keyActivities.addAll(challanService.getActivities(assetId,scoreDao));
+        keyActivities.addAll(distanceService.getActivities(assetId,scoreDao));
         return keyActivities;
     }
 
@@ -107,8 +114,8 @@ public class ApplicationServiceImpl implements ApplicationService {
     public List<KeyFactorDataScore> getKeyFactorData(String assetId, ScoreDao scoreDao) {
         List<KeyFactorDataScore> keyFactorDataScoreList = new ArrayList<>();
         keyFactorDataScoreList.addAll(challanService.getKeyFactorData(assetId,scoreDao));
-//        keyFactorDataScoreList.addAll(distanceService.getKeyFactorData(assetId,scoreDao));
-        keyFactorDataScoreList.addAll(maintenanceService.getKeyFactorData(assetId, scoreDao));
+        keyFactorDataScoreList.addAll(distanceService.getKeyFactorData(assetId,scoreDao));
+   //     keyFactorDataScoreList.addAll(maintenanceService.getKeyFactorData(assetId, scoreDao));
         return keyFactorDataScoreList;
     }
 
