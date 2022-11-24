@@ -128,10 +128,17 @@ public class DistanceServiceImpl implements ApplicationService {
     }
 
     public void addActivity(OutStationActivity outStationActivity) {
+        outStationActivity.setTollId(this.cleanTollId(outStationActivity.getTollId()));
         outStationCommuteRepository.save(outStationActivity);
     }
 
+    private String cleanTollId(String tollId){
+        tollId = tollId.replaceAll("\\s","");
+        return tollId.toUpperCase();
+    }
+
     public void addNationalToll(com.acko.insuredassetcredibility.dao.NationalTollRegistry nationalTollRegistry){
+        nationalTollRegistry.setTollId(this.cleanTollId(nationalTollRegistry.getTollId()));
         registry.save(nationalTollRegistry);
     }
 }
