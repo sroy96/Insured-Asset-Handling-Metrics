@@ -109,7 +109,7 @@ public class ChallanServiceImpl implements ApplicationService {
     keyFactorsData.setDelta(delta.toString());
     keyFactorsData.setUsageCategory(getImpactCategory(delta));
     keyFactorsData.setTotal(totalEvents);
-    keyFactorsData.setKeyFactors(KeyFactors.CHALLAN);
+    keyFactorsData.setKeyFactor(KeyFactors.CHALLAN);
 
     return Collections.singletonList(KeyFactorDataScore.builder().keyFactorsData(keyFactorsData).score(calculatedScore.intValue()).build()) ;
   }

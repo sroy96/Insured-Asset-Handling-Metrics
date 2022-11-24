@@ -290,7 +290,7 @@ public class ServicingScoringUtil implements ScoringService {
         } else delta = deltaConstraint.toString();
 
         KeyFactorsData keyFactorsData = new KeyFactorsData();
-        keyFactorsData.setImpactType(ImpactType.LOW);
+        keyFactorsData.setImpact(ImpactType.LOW);
         keyFactorsData.setUsageCategory(ImpactCategory.EXCELLENT);
         keyFactorsData.setDelta(delta);
         keyFactorDataScore.setKeyFactorsData(keyFactorsData);

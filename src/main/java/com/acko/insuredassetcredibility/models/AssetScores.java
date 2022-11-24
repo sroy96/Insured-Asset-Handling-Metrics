@@ -21,7 +21,7 @@ import java.util.List;
 public class AssetScores {
     private String assetId;
     private String assetName;
-    private Double score;
+    private Integer score;
     private List<KeyActivities> keyActivities;
     private List<KeyFactorsData> keyFactorsData;
 }

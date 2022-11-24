@@ -22,9 +22,8 @@ import java.util.Map;
 @AllArgsConstructor
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class KeyFactorsData {
-    private KeyFactors keyFactors;
-    private ImpactType impactType;
-    private Double impactValue;
+    private KeyFactors keyFactor;
+    private ImpactType impact;
     private ImpactCategory usageCategory;
     private String delta;
     private Integer total;
