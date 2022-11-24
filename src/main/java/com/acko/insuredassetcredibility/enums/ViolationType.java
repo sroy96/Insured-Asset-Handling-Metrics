@@ -25,7 +25,7 @@ public enum ViolationType {
   private final ImpactType impactType;
 
 
-  private static HashMap<String,ViolationType> valueMap = new HashMap<>();
+  private static final HashMap<String,ViolationType> valueMap = new HashMap<>();
 
   static {
     for (ViolationType violationType:ViolationType.values()){

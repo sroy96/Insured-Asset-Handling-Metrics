@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.data.annotation.Id;
 
 import java.time.LocalDateTime;
 
@@ -13,6 +14,8 @@ import java.time.LocalDateTime;
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class VehicleMaintenanceCondition {
 
+    @Id
+    private String assetId;
     private ServicingStatus headLightCondition;
     private ServicingStatus brakeLightCondition;
     private ServicingStatus parkingLightCondition;
