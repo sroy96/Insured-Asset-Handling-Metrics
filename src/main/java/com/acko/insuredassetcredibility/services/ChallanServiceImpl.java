@@ -78,9 +78,9 @@ public class ChallanServiceImpl implements ApplicationService {
       challanDaos = challanRepository.findByAssetId(assetId);
     }
     else {
-      initialScore = scoreDao.getKeyFactorScores().get(KeyFactors.CHALLAN);
+      initialScore =  Objects.isNull(scoreDao.getKeyFactorScores())? AppConstants.BASE_SCORE : scoreDao.getKeyFactorScores().get(KeyFactors.CHALLAN);
       LocalDateTime startDate = scoreDao.getRefreshDate();
-      LocalDateTime endDate = startDate.plusDays(AppConstants.THRESHOLD_DAYS);
+      LocalDateTime endDate = startDate.plusMinutes(AppConstants.REFRESH_PERIOD_MINUTES);
       challanDaos = challanRepository.findByAssetIdAndUpdatedDateBetween(assetId,startDate,endDate);
 
     }
