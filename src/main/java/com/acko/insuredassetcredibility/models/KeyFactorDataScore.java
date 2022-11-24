@@ -12,8 +12,10 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class KeyFactorDataScore {
     KeyFactorsData keyFactorsData;
-    Integer score;
+    Double score;
 
 }
