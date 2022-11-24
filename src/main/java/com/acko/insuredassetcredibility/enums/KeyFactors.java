@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
 public enum KeyFactors {
     CHALLAN("challan"),
