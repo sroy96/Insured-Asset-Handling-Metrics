@@ -126,4 +126,12 @@ public class DistanceServiceImpl implements ApplicationService {
         keyFactorDataScores.add(keyFactorDataScore);
         return keyFactorDataScores;
     }
+
+    public void addActivity(OutStationActivity outStationActivity) {
+        outStationCommuteRepository.save(outStationActivity);
+    }
+
+    public void addNationalToll(com.acko.insuredassetcredibility.dao.NationalTollRegistry nationalTollRegistry){
+        registry.save(nationalTollRegistry);
+    }
 }
