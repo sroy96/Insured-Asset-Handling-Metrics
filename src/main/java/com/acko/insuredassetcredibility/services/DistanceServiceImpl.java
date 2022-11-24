@@ -74,8 +74,8 @@ public class DistanceServiceImpl implements ApplicationService {
         return null;
     }
 
-    private Double calculateScore(KeyActivities keyActivities) {
-        return 0.0;
+    private Integer calculateScore(KeyActivities keyActivities) {
+        return 0;
     }
 
     @Override
@@ -85,18 +85,18 @@ public class DistanceServiceImpl implements ApplicationService {
         keyFactorsData.setKeyFactors(KeyFactors.DISTANCE_COMMUTED);
         keyFactorsData.setImpactType(ImpactType.MEDIUM);
         log.info("Getting outstation activity");
-        Double score = this.calculateScore(this.getActivities(assetId, scoreDao).get(0));
+        Integer score = this.calculateScore(this.getActivities(assetId, scoreDao).get(0));
         keyFactorDataScore.setScore(score);
-        Double delta = scoreDao.getKeyFactorScores().get(KeyFactors.DISTANCE_COMMUTED);
+        Integer delta = scoreDao.getKeyFactorScores().get(KeyFactors.DISTANCE_COMMUTED);
         keyFactorsData.setDelta((delta > 0.0 ? "+" : "-") + delta);
-        Double lastScore = scoreDao.getScore();
+        Integer lastScore = scoreDao.getScore();
         if (score > AppConstants.OUTSTATION_COMMUTE__MONTHLY_THRESHOLD_IN_KM) {
             keyFactorsData.setUsageCategory(ImpactCategory.POOR);
-        } else if (lastScore < score && score < 500.0) {
+        } else if (lastScore < score && score < 500) {
             keyFactorsData.setUsageCategory(ImpactCategory.GOOD);
-        } else if (score < lastScore && score < 500.0) {
+        } else if (score < lastScore && score < 500) {
             keyFactorsData.setUsageCategory(ImpactCategory.VERY_GOOD);
-        } else if (score < 200.0 && lastScore < 200.0) {
+        } else if (score < 200 && lastScore < 200) {
             log.info("User has been under threshold for last 90 days.");
             keyFactorsData.setUsageCategory(ImpactCategory.EXCELLENT);
         }
