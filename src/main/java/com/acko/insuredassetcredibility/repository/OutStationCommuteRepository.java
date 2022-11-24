@@ -15,6 +15,8 @@ import java.util.List;
 
 @Repository
 public interface OutStationCommuteRepository extends MongoRepository<OutStationActivity,String> {
-    @Query("{'fastTagData.eventDate':{$gt:?0,$lt:?1}}")
-    List<OutStationActivity>findAllByAssetId(LocalDateTime from , LocalDateTime to, String assetId);
+
+    List<OutStationActivity>findAllByAssetIdAndTollEntryDateBetween(String assetId, LocalDateTime fromDate, LocalDateTime toDate);
+
 }
+

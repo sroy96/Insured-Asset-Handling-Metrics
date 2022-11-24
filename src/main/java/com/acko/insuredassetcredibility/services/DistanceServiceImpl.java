@@ -73,7 +73,7 @@ public class DistanceServiceImpl implements ApplicationService {
     private EventData getFastTagEvent(String assetId, LocalDateTime from, LocalDateTime to) {
         EventData fastTagEvent = new EventData();
         fastTagEvent.setEventName(Activities.OUTSTATION_COMMUTE.getActivityId());
-        List<OutStationActivity> activities = outStationCommuteRepository.findAllByAssetId(from, to, assetId);
+        List<OutStationActivity> activities = outStationCommuteRepository.findAllByAssetIdAndTollEntryDateBetween(assetId,from,to);
         fastTagEvent.setCount(activities.size());
         List<BaseEventData> baseEventDataList = new ArrayList<>();
         if (activities.size() > 0) {
