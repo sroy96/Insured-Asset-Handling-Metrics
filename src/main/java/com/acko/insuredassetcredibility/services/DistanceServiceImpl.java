@@ -103,7 +103,9 @@ public class DistanceServiceImpl implements ApplicationService {
         keyFactorsData.setKeyFactor(KeyFactors.DISTANCE_COMMUTED);
         keyFactorsData.setImpact(ImpactType.MEDIUM);
         log.info("Getting outstation activity");
-        Integer score = this.calculateScore(this.getActivities(assetId, scoreDao).get(0));
+        KeyActivities keyActivities = this.getActivities(assetId, scoreDao).get(0);
+        keyFactorsData.setTotal(keyFactorsData.getTotal());
+        Integer score = this.calculateScore(keyActivities);
         keyFactorDataScore.setScore(score);
         Integer delta = scoreDao.getKeyFactorScores().get(KeyFactors.DISTANCE_COMMUTED);
         keyFactorsData.setDelta((delta > 0.0 ? "+" : "-") + delta);
