@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ServicingScoringUtil implements ScoringService {
+public class ServicingScoringUtil{
 
     @Autowired
     private VehicleAccidentDao vehicleAccidentDao;
@@ -38,12 +38,7 @@ public class ServicingScoringUtil implements ScoringService {
     @Autowired
     private KeyActivities keyActivities;
 
-    @Override
-    public Integer calculateScore(String assetId) {
-        return null;
-    }
-
-    private Integer calculateServiceActivityScore(String assetId, int originalVehicleServicingScore) {
+    public Integer calculateServiceActivityScore(String assetId, int originalVehicleServicingScore) {
         LocalDateTime currDate = LocalDateTime.now();
         int scoreFactor = originalVehicleServicingScore / AppConstants.VEHICLE_SERVICING_FACTOR_COUNT;
         int initialAccidentScore = scoreFactor;
@@ -269,55 +264,5 @@ public class ServicingScoringUtil implements ScoringService {
         }
 
         return modifiedMaintenanceScore;
-    }
-
-
-    @Override
-    public Integer getScore(String assetId) {
-        return null;
-    }
-
-    @Override
-    public KeyFactorDataScore calculateKeyFactor(String assetId, ScoreDao scoreDao) {
-
-        Integer lastUpdatedScore = scoreDao.getKeyFactorScores().get(KeyFactors.SERVICING);
-        Integer currScore = calculateServiceActivityScore(assetId, lastUpdatedScore);
-        Integer deltaConstraint = lastUpdatedScore - currScore;
-
-        String delta = "";
-        if (deltaConstraint > 0) {
-            delta = "+".concat(deltaConstraint.toString());
-        } else delta = deltaConstraint.toString();
-
-        KeyFactorsData keyFactorsData = new KeyFactorsData();
-        keyFactorsData.setImpact(ImpactType.LOW);
-        keyFactorsData.setUsageCategory(ImpactCategory.EXCELLENT);
-        keyFactorsData.setDelta(delta);
-        keyFactorDataScore.setKeyFactorsData(keyFactorsData);
-        keyFactorDataScore.setScore(currScore);
-
-        return keyFactorDataScore;
-    }
-
-
-    @Override
-    public KeyActivities getActivityDetails(String assetId) {
-
-        EventData accidentEvent = new EventData();
-        accidentEvent.setEventName(Events.ACCIDENT.getEventName());
-        //accidentEvent.setData();
-        //accidentEvent.setCount();
-
-        List<EventData> events = new ArrayList<>();
-        events.add(accidentEvent);
-        keyActivities.setEvents(events);
-        keyActivities.setActivityName(Activities.SERVICING.getActivityId());
-
-
-        return keyActivities;
-    }
-
-    private Integer calculateDelta(String assetId) {
-        return null;
     }
 }
