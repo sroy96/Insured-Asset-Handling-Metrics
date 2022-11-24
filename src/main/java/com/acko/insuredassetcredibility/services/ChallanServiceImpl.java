@@ -74,7 +74,7 @@ public class ChallanServiceImpl implements ApplicationService {
 
   @Override
   public List<KeyFactorDataScore> getKeyFactorData(String assetId, ScoreDao scoreDao) {
-    Double initialScore = null;
+    Integer initialScore = null;
     List<ChallanDao> challanDaos = null;
     if (Objects.isNull(scoreDao)) {
       initialScore = AppConstants.BASE_SCORE;
@@ -87,7 +87,7 @@ public class ChallanServiceImpl implements ApplicationService {
       challanDaos = challanRepository.findByAssetIdAndUpdatedDateBetween(assetId,startDate,endDate);
 
     }
-    Double calculatedScore = initialScore;
+    Integer calculatedScore = initialScore;
 //    String lastDeltaStr = scoreDao.getKeyFactorsData().stream().filter(keyFactorsData -> keyFactorsData
 //        .getFactorName().equals(Activities.CHALLANS.getActivity_id())).findFirst().get().getDelta();
 //    Integer lastDelta = Integer.valueOf(lastDeltaStr);
@@ -104,21 +104,21 @@ public class ChallanServiceImpl implements ApplicationService {
     if (initialScore.equals(calculatedScore) ){
       calculatedScore = calculatedScore + AppConstants.NO_CHALLAN_BONUS_SCORE;
     }
-    Double delta = calculatedScore - initialScore;
+    Integer delta = calculatedScore - initialScore;
     KeyFactorsData keyFactorsData = new KeyFactorsData();
-    keyFactorsData.setDelta(Integer.valueOf(delta.intValue()).toString());
+    keyFactorsData.setDelta(delta.toString());
     keyFactorsData.setUsageCategory(getImpactCategory(delta));
     keyFactorsData.setTotal(totalEvents);
     keyFactorsData.setKeyFactors(KeyFactors.CHALLAN);
 
-    return Collections.singletonList(KeyFactorDataScore.builder().keyFactorsData(keyFactorsData).score(calculatedScore).build()) ;
+    return Collections.singletonList(KeyFactorDataScore.builder().keyFactorsData(keyFactorsData).score(calculatedScore.intValue()).build()) ;
   }
 
   public void save(ChallanDao challanDao){
     challanRepository.save(challanDao);
   }
 
-  private ImpactCategory getImpactCategory(Double delta){
+  private ImpactCategory getImpactCategory(Integer delta){
     if (delta>0){
       return ImpactCategory.EXCELLENT;
     }else if(delta>-30){
