@@ -9,6 +9,7 @@ import com.acko.insuredassetcredibility.models.*;
 import com.acko.insuredassetcredibility.repository.ChallanRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -26,14 +27,15 @@ public class ChallanServiceImpl implements ApplicationService {
     Map<String, EventData> eventDataMap = new HashMap<>();
 
     int totalCount = 0;
-    LocalDateTime startDate = null;
-    LocalDateTime endDate = null;
-
     List<ChallanDao> challanDaos = null;
-    if (Objects.isNull(scoreDao))
+    if (Objects.isNull(scoreDao)) {
       challanDaos = challanRepository.findByAssetId(assetId);
-    else
-      challanDaos = challanRepository.findByAssetIdAndUpdatedDateBetween(assetId,startDate,endDate);
+    }
+    else {
+      LocalDateTime startDate = scoreDao.getRefreshDate();
+      LocalDateTime endDate = startDate.plusMinutes(AppConstants.REFRESH_PERIOD_MINUTES);
+      challanDaos = challanRepository.findByAssetIdAndUpdatedDateBetween(assetId, startDate, endDate);
+    }
 
 
     for (ChallanDao challanDao:challanDaos){
@@ -65,7 +67,7 @@ public class ChallanServiceImpl implements ApplicationService {
       eventDataList.add(eventData.getValue());
     }
     KeyActivities keyActivities = KeyActivities.builder().activityId(Activities.CHALLANS.getActivityId())
-        .activityName(Activities.CHALLANS.getActivityId()).total(totalCount).events(eventDataList).build();
+        .activityName(Activities.CHALLANS.getActivityId()).total(totalCount).unitOfMeasurement("number").events(eventDataList).build();
     return Collections.singletonList(keyActivities);
   }
 
@@ -93,7 +95,7 @@ public class ChallanServiceImpl implements ApplicationService {
     int totalEvents = 0;
     for (ChallanDao challanDao:challanDaos){
       for (ViolationDetail violationDetail:challanDao.getViolationDetails()){
-        calculatedScore = calculatedScore + (Objects.isNull(ViolationType.get(violationDetail.getOffense()))?Integer.valueOf(0):
+        calculatedScore = calculatedScore + (Objects.isNull(ViolationType.get(violationDetail.getOffense()))?Integer.valueOf(-5):
             ViolationType.get(violationDetail.getOffense()).getScore());
         totalEvents++;
       }
@@ -101,15 +103,16 @@ public class ChallanServiceImpl implements ApplicationService {
     if (initialScore.equals(calculatedScore) ){
       calculatedScore = calculatedScore + AppConstants.NO_CHALLAN_BONUS_SCORE;
     }
-    calculatedScore = calculatedScore>1000?AppConstants.BASE_SCORE:calculatedScore;
+    calculatedScore = calculatedScore>AppConstants.BASE_SCORE?AppConstants.BASE_SCORE:calculatedScore;
     Integer delta = calculatedScore - initialScore;
     KeyFactorsData keyFactorsData = new KeyFactorsData();
-    keyFactorsData.setDelta(delta.toString());
+    keyFactorsData.setDelta(delta>0? "+".concat(delta.toString()) :delta.toString());
     keyFactorsData.setKeyFactor(KeyFactors.CHALLAN);
     keyFactorsData.setImpact(ImpactType.HIGH);
     keyFactorsData.setUsageCategory(getImpactCategory(delta));
     keyFactorsData.setTotal(totalEvents);
     keyFactorsData.setKeyFactor(KeyFactors.CHALLAN);
+
 
     return Collections.singletonList(KeyFactorDataScore.builder().keyFactorsData(keyFactorsData).score(calculatedScore).build()) ;
   }

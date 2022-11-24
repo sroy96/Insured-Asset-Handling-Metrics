@@ -9,15 +9,10 @@ import java.util.HashMap;
 @Getter
 public enum ViolationType {
 
-  DRINK_AND_DRIVE("Drink and Drive",-50,ImpactType.HIGH),
-  OVER_LOADING_PILLION("Over loading pillion",-5,ImpactType.LOW),
+  DRINK_AND_DRIVE("Drink and Drive",-100,ImpactType.HIGH),
   OVER_SPEEDING("Over Speeding",-20,ImpactType.MEDIUM),
-  DANGEROUS_DRIVING("Dangerous Driving",-30,ImpactType.LOW),
-  DRIVING_WITHOUT_LICENSE("Driving without license",-20,ImpactType.MEDIUM),
-  DRIVING_WITHOUT_INSURANCE("Driving without insurance",-20,ImpactType.MEDIUM),
-  SIGNAL_JUMPING("Signal jumping",-10,ImpactType.LOW),
+  SIGNAL_JUMPING("Signal jumping",-20,ImpactType.LOW),
   RIDING_WITHOUT_HELMET("Riding without helmet",-5,ImpactType.LOW),
-  DRIVING_BY_MINOR("Driving by Minor",-20,ImpactType.MEDIUM),
   NO_PARKING("No parking",-10,ImpactType.LOW);
 
   private final String name;
