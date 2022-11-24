@@ -58,13 +58,13 @@ public class ApplicationServiceImpl implements ApplicationService {
             assetScores.setAssetName(assetDao.getMake() +"-" + assetDao.getModel());
             assetScores.setAssetId(assetId);
             ScoreDao scoreDao = scoringDataRepository.findScoreDaosByAssetId(assetId);
-//            if (!Objects.isNull(scoreDao) &&  ChronoUnit.MINUTES.between(scoreDao.getRefreshDate(), LocalDateTime.now()) < AppConstants.REFRESH_PERIOD_MINUTES) {
-//                assetScores.setScore(scoreDao.getScore());
-//                assetScores.setKeyActivities(scoreDao.getActivitiesList());
-//                assetScores.setKeyFactorsData(scoreDao.getKeyFactorsData());
-//                assetScoresList.add(assetScores);
-//                continue;
-//            }
+            if (!Objects.isNull(scoreDao) &&  ChronoUnit.MINUTES.between(scoreDao.getRefreshDate(), LocalDateTime.now()) < AppConstants.REFRESH_PERIOD_MINUTES) {
+                assetScores.setScore(scoreDao.getScore());
+                assetScores.setKeyActivities(scoreDao.getActivitiesList());
+                assetScores.setKeyFactorsData(scoreDao.getKeyFactorsData());
+                assetScoresList.add(assetScores);
+                continue;
+            }
 
             List<KeyActivities> keyActivitiesList =this.getActivities(assetId,scoreDao);
             List<KeyFactorDataScore> keyFactorDataScores = this.getKeyFactorData(assetId,scoreDao);
