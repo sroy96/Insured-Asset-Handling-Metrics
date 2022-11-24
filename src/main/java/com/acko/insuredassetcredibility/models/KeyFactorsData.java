@@ -25,8 +25,6 @@ public class KeyFactorsData {
     private ImpactType impactType;
     private Double impactValue;
     private ImpactCategory usageCategory;
-    private String descriptions;
-    private String unitOfMeasurement;
     private String delta;
     private Integer total;
 }
