@@ -13,5 +13,5 @@ import lombok.RequiredArgsConstructor;
 public enum ImpactType {
     HIGH,
     MEDIUM,
-    LOW;
+    LOW
 }

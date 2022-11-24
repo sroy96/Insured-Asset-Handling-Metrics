@@ -6,11 +6,11 @@ import java.util.List;
 
 public interface VehicleRepairDao {
 
-    public List<VehicleRepair> getAllVehicleRepair();
+    List<VehicleRepair> getAllVehicleRepair();
 
-    public List<VehicleRepair> getVehicleRepair(String assetId);
+    List<VehicleRepair> getVehicleRepair(String assetId);
 
-    public void updateVehicleRepair(VehicleRepair vehicleRepair);
+    void updateVehicleRepair(VehicleRepair vehicleRepair);
 
-    public void deleteVehicleRepair(VehicleRepair vehicleRepair);
+    void deleteVehicleRepair(VehicleRepair vehicleRepair);
 }
