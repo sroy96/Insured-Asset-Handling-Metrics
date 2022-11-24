@@ -36,9 +36,9 @@ public class ApplicationController {
     @Autowired
     DistanceServiceImpl distanceService;
 
-    @GetMapping("/asset/details")
-    public ResponseEntity<AssetScoringResponse> getAssetScores(@RequestBody AssetScoringRequest assetScoringRequest) {
-        AssetScoringResponse assetScoringResponse =applicationService.getAssetScoringDetails(assetScoringRequest);
+    @GetMapping("/asset/details/{phone}")
+    public ResponseEntity<AssetScoringResponse> getAssetScores(@PathVariable("phone") String phone) {
+        AssetScoringResponse assetScoringResponse =applicationService.getAssetScoringDetails(phone);
         return new ResponseEntity<>(assetScoringResponse,HttpStatus.OK);
     }
 

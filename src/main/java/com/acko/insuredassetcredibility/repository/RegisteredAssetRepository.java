@@ -14,4 +14,5 @@ import java.util.List;
 @Repository
 public interface RegisteredAssetRepository extends MongoRepository<RegisteredAssetDao,String> {
     List<RegisteredAssetDao> findAllByOwnerMobileOrOwnerEmail(String mobile, String email);
+    List<RegisteredAssetDao> findAllByOwnerMobile(String mobile);
 }

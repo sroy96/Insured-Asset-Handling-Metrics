@@ -44,8 +44,8 @@ public class ApplicationServiceImpl implements ApplicationService {
     DistanceServiceImpl distanceService;
 
 
-    public AssetScoringResponse getAssetScoringDetails(AssetScoringRequest assetScoringRequest) {
-        List<RegisteredAssetDao> registeredAssetList = repository.findAllByOwnerMobileOrOwnerEmail(assetScoringRequest.getMobile(), assetScoringRequest.getEmail());
+    public AssetScoringResponse getAssetScoringDetails(String phone) {
+        List<RegisteredAssetDao> registeredAssetList = repository.findAllByOwnerMobile(phone);
         AssetScoringResponse assetScoringResponse = new AssetScoringResponse();
         List<AssetScores> assetScoresList = new ArrayList<>();
         for(RegisteredAssetDao assetDao: registeredAssetList){
