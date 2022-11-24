@@ -9,11 +9,13 @@ import com.acko.insuredassetcredibility.models.KeyFactorDataScore;
 import com.acko.insuredassetcredibility.models.KeyFactorsData;
 import com.acko.insuredassetcredibility.utils.scoring.ServicingScoringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@Service
 public class MaintenanceServiceImpl implements ApplicationService {
 
     @Autowired
