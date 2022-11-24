@@ -5,10 +5,12 @@ import com.acko.insuredassetcredibility.models.VehicleAccident;
 import com.acko.insuredassetcredibility.repository.VehicleAccidentRepository;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Data
+@Component
 public class VehicleAccidentDaoImpl implements VehicleAccidentDao {
 
     @Autowired

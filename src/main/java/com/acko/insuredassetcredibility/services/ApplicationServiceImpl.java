@@ -43,6 +43,9 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Autowired
     DistanceServiceImpl distanceService;
 
+    @Autowired
+    private MaintenanceServiceImpl maintenanceService;
+
 
     public AssetScoringResponse getAssetScoringDetails(String phone) {
         List<RegisteredAssetDao> registeredAssetList = repository.findAllByOwnerMobile(phone);
@@ -102,6 +105,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         List<KeyFactorDataScore> keyFactorDataScoreList = new ArrayList<>();
         keyFactorDataScoreList.addAll(challanService.getKeyFactorData(assetId,scoreDao));
 //        keyFactorDataScoreList.addAll(distanceService.getKeyFactorData(assetId,scoreDao));
+        keyFactorDataScoreList.addAll(maintenanceService.getKeyFactorData(assetId, scoreDao));
         return keyFactorDataScoreList;
     }
 
