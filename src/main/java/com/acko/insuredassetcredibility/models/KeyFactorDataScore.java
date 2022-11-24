@@ -16,6 +16,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class KeyFactorDataScore {
     KeyFactorsData keyFactorsData;
-    Double score;
+    Integer score;
 
 }
