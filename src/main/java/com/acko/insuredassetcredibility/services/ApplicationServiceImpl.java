@@ -73,9 +73,11 @@ public class ApplicationServiceImpl implements ApplicationService {
             scoreDao.setAssetId(assetId);
             scoreDao.setActivitiesList(keyActivitiesList);
 
-            List<KeyFactorsData>keyFactorsData = new ArrayList<>();
+            List<KeyFactorsData> keyFactorsData = new ArrayList<>();
+            Map<KeyFactors,Integer> keyFactorScores = new HashMap<>();
             for(KeyFactorDataScore dataScore : keyFactorDataScores){
                 keyFactorsData.add(dataScore.getKeyFactorsData());
+                keyFactorScores.put(dataScore.getKeyFactorsData().getKeyFactor(),dataScore.getScore());
                 finalScore = finalScore + dataScore.getScore() * dataScore.getKeyFactorsData().getKeyFactor().getWeightage();
             }
             scoreDao.setKeyFactorsData(keyFactorsData);
@@ -84,6 +86,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             scoreDao.setScore((int)finalScore);
             assetScoresList.add(assetScores);
             scoreDao.setRefreshDate(LocalDateTime.now());
+            scoreDao.setKeyFactorScores(keyFactorScores);
             scoringDataRepository.save(scoreDao);
 
         }
