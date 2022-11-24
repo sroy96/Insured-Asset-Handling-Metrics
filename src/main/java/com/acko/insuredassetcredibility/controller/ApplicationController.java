@@ -8,6 +8,7 @@ package com.acko.insuredassetcredibility.controller;
 import com.acko.insuredassetcredibility.dao.ChallanDao;
 import com.acko.insuredassetcredibility.dao.NationalTollRegistry;
 import com.acko.insuredassetcredibility.dao.acitivity.OutStationActivity;
+import com.acko.insuredassetcredibility.dao.RegisteredAssetDao;
 import com.acko.insuredassetcredibility.dto.requests.AssetScoringRequest;
 import com.acko.insuredassetcredibility.dto.responses.AssetScoringResponse;
 import com.acko.insuredassetcredibility.models.KeyActivities;
@@ -54,9 +55,15 @@ public class ApplicationController {
     }
 
     @PostMapping("/resource/toll")
-    public ResponseEntity<HttpStatus>addNationalTollData(@RequestBody NationalTollRegistry nationalTollRegistry){
+    public ResponseEntity<HttpStatus>addNationalTollData(@RequestBody NationalTollRegistry nationalTollRegistry) {
         distanceService.addNationalToll(nationalTollRegistry);
         return new ResponseEntity<>(HttpStatus.OK);
+
+    }
+
+    @PostMapping("/asset")
+    public void saveAssest(@RequestBody RegisteredAssetDao registeredAssetDao) {
+        applicationService.saveAsset(registeredAssetDao);
     }
 
 }

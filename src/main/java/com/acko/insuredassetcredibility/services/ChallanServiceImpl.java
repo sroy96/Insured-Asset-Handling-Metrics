@@ -104,6 +104,7 @@ public class ChallanServiceImpl implements ApplicationService {
     if (initialScore.equals(calculatedScore) ){
       calculatedScore = calculatedScore + AppConstants.NO_CHALLAN_BONUS_SCORE;
     }
+    calculatedScore = calculatedScore>1000?AppConstants.BASE_SCORE:calculatedScore;
     Integer delta = calculatedScore - initialScore;
     KeyFactorsData keyFactorsData = new KeyFactorsData();
     keyFactorsData.setDelta(delta.toString());
@@ -111,7 +112,7 @@ public class ChallanServiceImpl implements ApplicationService {
     keyFactorsData.setTotal(totalEvents);
     keyFactorsData.setKeyFactor(KeyFactors.CHALLAN);
 
-    return Collections.singletonList(KeyFactorDataScore.builder().keyFactorsData(keyFactorsData).score(calculatedScore.intValue()).build()) ;
+    return Collections.singletonList(KeyFactorDataScore.builder().keyFactorsData(keyFactorsData).score(calculatedScore).build()) ;
   }
 
   public void save(ChallanDao challanDao){

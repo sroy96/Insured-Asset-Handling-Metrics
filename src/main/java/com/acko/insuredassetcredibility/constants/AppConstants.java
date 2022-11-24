@@ -13,6 +13,7 @@ public class AppConstants {
     public static final Double OUTSTATION_COMMUTE__MONTHLY_THRESHOLD_IN_KM      = 500.0;
     public static final Integer VEHICLE_SERVICING_FACTOR_COUNT                  = 3;
     public static final Long REFRESH_PERIOD                                     = 45L;
+    public static final Long REFRESH_PERIOD_MINUTES                             = 64800L;
 
     public static final Integer THRESHOLD_DAYS                                  = 45;
     public static final Integer NO_CHALLAN_BONUS_SCORE                          = 30;

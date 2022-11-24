@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
-@Document
+@Document("assetdata")
 public class RegisteredAssetDao {
     @Id
     private String assetId;

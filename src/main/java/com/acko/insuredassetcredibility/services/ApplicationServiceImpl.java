@@ -5,6 +5,7 @@
  */
 package com.acko.insuredassetcredibility.services;
 
+import com.acko.insuredassetcredibility.constants.AppConstants;
 import com.acko.insuredassetcredibility.dao.RegisteredAssetDao;
 import com.acko.insuredassetcredibility.dao.ScoreDao;
 import com.acko.insuredassetcredibility.dto.requests.AssetScoringRequest;
@@ -22,6 +23,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.Period;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @Service
@@ -33,25 +37,51 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Autowired
     ScoringDataRepository scoringDataRepository;
 
+    @Autowired
+    ChallanServiceImpl challanService;
+
+    @Autowired
+    DistanceServiceImpl distanceService;
+
 
     public AssetScoringResponse getAssetScoringDetails(AssetScoringRequest assetScoringRequest) {
         List<RegisteredAssetDao> registeredAssetList = repository.findAllByOwnerMobileOrOwnerEmail(assetScoringRequest.getMobile(), assetScoringRequest.getEmail());
         AssetScoringResponse assetScoringResponse = new AssetScoringResponse();
         List<AssetScores> assetScoresList = new ArrayList<>();
         for(RegisteredAssetDao assetDao: registeredAssetList){
+            double finalScore = 0;
             String assetId = assetDao.getAssetId();
             AssetScores assetScores =  new AssetScores();
             assetScores.setAssetName(assetDao.getMake() +"-" + assetDao.getModel());
             assetScores.setAssetId(assetId);
             ScoreDao scoreDao = scoringDataRepository.findScoreDaosByAssetId(assetId);
-            assetScores.setKeyActivities(this.getActivities(assetId,scoreDao));
+            if (!Objects.isNull(scoreDao) &&  ChronoUnit.MINUTES.between(scoreDao.getRefreshDate(), LocalDateTime.now()) < AppConstants.REFRESH_PERIOD_MINUTES) {
+                assetScores.setScore(scoreDao.getScore());
+                assetScores.setKeyActivities(scoreDao.getActivitiesList());
+                assetScores.setKeyFactorsData(scoreDao.getKeyFactorsData());
+                assetScoresList.add(assetScores);
+                continue;
+            }
+
+            List<KeyActivities> keyActivitiesList =this.getActivities(assetId,scoreDao);
+            List<KeyFactorDataScore> keyFactorDataScores = this.getKeyFactorData(assetId,scoreDao);
+            assetScores.setKeyActivities(keyActivitiesList);
+            scoreDao = Objects.isNull(scoreDao)?new ScoreDao():scoreDao;
+            scoreDao.setAssetId(assetId);
+            scoreDao.setActivitiesList(keyActivitiesList);
+
             List<KeyFactorsData>keyFactorsData = new ArrayList<>();
-            List<KeyFactorDataScore>keyFactorDataScores = this.getKeyFactorData(assetId,scoreDao);
             for(KeyFactorDataScore dataScore : keyFactorDataScores){
                 keyFactorsData.add(dataScore.getKeyFactorsData());
+                finalScore = finalScore + dataScore.getScore() * dataScore.getKeyFactorsData().getKeyFactor().getWeightage();
             }
+            scoreDao.setKeyFactorsData(keyFactorsData);
             assetScores.setKeyFactorsData(keyFactorsData);
+            assetScores.setScore((int)finalScore);
+            scoreDao.setScore((int)finalScore);
             assetScoresList.add(assetScores);
+            scoreDao.setRefreshDate(LocalDateTime.now());
+            scoringDataRepository.save(scoreDao);
 
         }
         assetScoringResponse.setAssetScoresList(assetScoresList);
@@ -62,12 +92,20 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public List<KeyActivities> getActivities(String assetId, ScoreDao scoreDao) {
         List<KeyActivities>keyActivities = new ArrayList<>();
-        keyActivities.add(new DistanceServiceImpl().getActivities(assetId,scoreDao).get(0));
+        keyActivities.addAll(distanceService.getActivities(assetId,scoreDao));
+        keyActivities.addAll(challanService.getActivities(assetId,scoreDao));
         return keyActivities;
     }
 
     @Override
     public List<KeyFactorDataScore> getKeyFactorData(String assetId, ScoreDao scoreDao) {
-        return null;
+        List<KeyFactorDataScore> keyFactorDataScoreList = new ArrayList<>();
+        keyFactorDataScoreList.addAll(challanService.getKeyFactorData(assetId,scoreDao));
+        keyFactorDataScoreList.addAll(distanceService.getKeyFactorData(assetId,scoreDao));
+        return keyFactorDataScoreList;
+    }
+
+    public void saveAsset(RegisteredAssetDao registeredAssetDao){
+        repository.save(registeredAssetDao);
     }
 }
