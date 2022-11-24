@@ -12,7 +12,7 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -21,9 +21,9 @@ import java.util.Map;
 public class ScoreDao {
     @Id
     String assetId;
-    Integer score;
-    Map<KeyFactors, Integer> keyFactorScores;
-    Date refreshDate;
+    Double  score;
+    Map<KeyFactors, Double> keyFactorScores;
+    LocalDateTime refreshDate;
     List<KeyActivities> activitiesList;
     List<KeyFactorsData> keyFactorsData;
 
