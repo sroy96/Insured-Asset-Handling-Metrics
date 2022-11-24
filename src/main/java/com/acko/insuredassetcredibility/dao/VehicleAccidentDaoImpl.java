@@ -2,12 +2,18 @@ package com.acko.insuredassetcredibility.dao;
 
 import com.acko.insuredassetcredibility.dao.interfaces.VehicleAccidentDao;
 import com.acko.insuredassetcredibility.models.VehicleAccident;
+import com.acko.insuredassetcredibility.repository.VehicleAccidentRepository;
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
 @Data
 public class VehicleAccidentDaoImpl implements VehicleAccidentDao {
+
+    @Autowired
+    private VehicleAccidentRepository vehicleAccidentRepository;
+
     @Override
     public List<VehicleAccident> getAllVehicleAccident() {
         return null;
@@ -15,7 +21,8 @@ public class VehicleAccidentDaoImpl implements VehicleAccidentDao {
 
     @Override
     public List<VehicleAccident> getVehicleAccident(String assetId) {
-        return null;
+
+        return vehicleAccidentRepository.findAllByAssetId(assetId);
     }
 
     @Override

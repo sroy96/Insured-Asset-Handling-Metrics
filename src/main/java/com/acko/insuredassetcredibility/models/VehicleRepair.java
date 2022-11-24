@@ -26,5 +26,5 @@ public class VehicleRepair {
     private LocalDateTime batteryChangedDate;
     private LocalDateTime sparkPlugRepairDate;
     private LocalDateTime windShieldWiperChangeDate;
-    private Long lastRefreshedTimeMillis;
+    private LocalDateTime lastRefreshedTime;
 }

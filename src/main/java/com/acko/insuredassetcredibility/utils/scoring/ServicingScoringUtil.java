@@ -52,7 +52,7 @@ public class ServicingScoringUtil implements ScoringService {
 
         int vehicleAccidentScore = getVehicleAccidentScore(assetId, initialAccidentScore, currDate);
         int vehicleRepairScore = getVehicleRepairScore(assetId, initialRepairScore, currDate);
-        int vehicleMaintenanceConditionScore = getVehicleMaintenanceConditionScore(assetId, initialMaintenanceConditionScore);
+        int vehicleMaintenanceConditionScore = getVehicleMaintenanceConditionScore(assetId, initialMaintenanceConditionScore, currDate);
 
         return Math.min(originalVehicleServicingScore, (vehicleAccidentScore + vehicleRepairScore + vehicleMaintenanceConditionScore));
     }
@@ -61,7 +61,7 @@ public class ServicingScoringUtil implements ScoringService {
 
         int modifiedAccidentScore = initialAccidentScore;
         List<VehicleAccident> vehicleAccident = vehicleAccidentDao.getVehicleAccident(assetId).stream().filter(
-                d -> (System.currentTimeMillis() - d.getLastRefreshedTimeMillis() == 45)
+                d -> (ChronoUnit.DAYS.between(currDate, d.getLastRefreshedTime()) == AppConstants.REFRESH_PERIOD)
         ).collect(Collectors.toList());
 
         for (VehicleAccident accidentData : vehicleAccident) {
@@ -77,7 +77,7 @@ public class ServicingScoringUtil implements ScoringService {
 
         int modifiedRepairScore = initialRepairScore;
         List<VehicleRepair> vehicleRepair = vehicleRepairDao.getVehicleRepair(assetId).stream().filter(
-                d -> (System.currentTimeMillis() - d.getLastRefreshedTimeMillis() == 45)
+                d -> (ChronoUnit.DAYS.between(currDate, d.getLastRefreshedTime()) == AppConstants.REFRESH_PERIOD)
         ).collect(Collectors.toList());
 
         int noOfTimesEngineOilChanged = 0;
@@ -221,11 +221,11 @@ public class ServicingScoringUtil implements ScoringService {
 
     }
 
-    private Integer getVehicleMaintenanceConditionScore(String assetId, int initialMaintenanceScore) {
+    private Integer getVehicleMaintenanceConditionScore(String assetId, int initialMaintenanceScore, LocalDateTime currDate) {
 
         int modifiedMaintenanceScore = initialMaintenanceScore;
         List<VehicleMaintenanceCondition> vehicleMaintenanceCondition = vehicleMaintenanceConditionDao.getVehicleMaintenanceCondition(assetId).stream().filter(
-                d -> (System.currentTimeMillis() - d.getLastRefreshedTimeMillis() == 45)
+                d -> (ChronoUnit.DAYS.between(currDate, d.getLastRefreshedTime()) == AppConstants.REFRESH_PERIOD)
         ).collect(Collectors.toList());
 
         for (VehicleMaintenanceCondition maintenanceConditionData : vehicleMaintenanceCondition) {
