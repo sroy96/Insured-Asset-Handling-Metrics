@@ -22,7 +22,7 @@ public class ApplicationController {
     ApplicationServiceImpl applicationService;
     @GetMapping("/asset/details")
     public ResponseEntity<AssetScoringResponse> getAssetScores(@RequestBody AssetScoringRequest assetScoringRequest) {
-        applicationService.getAssetScoringDetails(assetScoringRequest);
-        return new ResponseEntity<>(HttpStatus.OK);
+        AssetScoringResponse assetScoringResponse =applicationService.getAssetScoringDetails(assetScoringRequest);
+        return new ResponseEntity<>(assetScoringResponse,HttpStatus.OK);
     }
 }

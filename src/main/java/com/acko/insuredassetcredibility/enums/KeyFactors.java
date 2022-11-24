@@ -5,15 +5,22 @@
  */
 package com.acko.insuredassetcredibility.enums;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public enum KeyFactors {
-    CHALLAN,
-    DISTANCE_COMMUTED,
-    SERVICING,
-    CLAIMS,
-    FIR
+    CHALLAN("challan"),
+    DISTANCE_COMMUTED("distance_commute"),
+    SERVICING("servicing"),
+    CLAIMS("claims"),
+    FIR("FIR");
+
+    private String keyFactorsValue;
+
 }

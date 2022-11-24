@@ -279,6 +279,11 @@ public class ServicingScoringUtil implements ScoringService {
     }
 
     @Override
+    public Double calculateDelta(String assetId) {
+        return null;
+    }
+
+    @Override
     public KeyFactorDataScore calculateKeyFactor(String assetId, ScoreDao scoreDao) {
 
         Integer lastUpdatedScore = scoreDao.getKeyFactorScores().get(KeyFactors.SERVICING);

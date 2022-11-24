@@ -18,6 +18,6 @@ public class AssetOdometerActivity {
     private String assetId;
     private Double lastOdometerReading;
     private String source;
-    private Date recordData;
+    private LocalDateTime recordData;
 
 }

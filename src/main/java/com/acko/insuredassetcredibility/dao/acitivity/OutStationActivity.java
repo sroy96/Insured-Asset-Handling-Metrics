@@ -10,6 +10,7 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -19,12 +20,10 @@ public class OutStationActivity {
     @Id
     private String assetId;
     private String eventName;
-    private FastTagData data;
+    private String tollId;
+    private Integer tollAmount;
+    private Double longitude;
+    private Double latitude;
+    private LocalDateTime tollEntryDate;
 
-    @Data
-    @Document
-    private static class FastTagData {
-        String tollId;
-        Date eventDate;
-    }
 }

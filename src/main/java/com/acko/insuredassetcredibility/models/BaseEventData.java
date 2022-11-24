@@ -10,6 +10,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @AllArgsConstructor
@@ -18,5 +19,5 @@ import java.util.Date;
 @Builder
 public class BaseEventData {
     String name;
-    Date date;
+    LocalDateTime date;
 }

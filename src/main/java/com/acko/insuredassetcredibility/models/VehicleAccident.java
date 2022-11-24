@@ -13,7 +13,7 @@ import java.util.Date;
 public class VehicleAccident {
 
     private String assetId;
-    private Date majorAccidentDate;
-    private Date minorAccidentDate;
+    private LocalDateTime majorAccidentDate;
+    private LocalDateTime minorAccidentDate;
     private Long lastRefreshedTimeMillis;
 }

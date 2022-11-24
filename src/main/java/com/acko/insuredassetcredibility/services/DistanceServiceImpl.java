@@ -5,10 +5,11 @@
  */
 package com.acko.insuredassetcredibility.services;
 
-import com.acko.insuredassetcredibility.dao.FastTagActivity;
+import com.acko.insuredassetcredibility.constants.AppConstants;
 import com.acko.insuredassetcredibility.dao.ScoreDao;
 import com.acko.insuredassetcredibility.dao.acitivity.OutStationActivity;
 import com.acko.insuredassetcredibility.enums.Activities;
+import com.acko.insuredassetcredibility.enums.ImpactCategory;
 import com.acko.insuredassetcredibility.enums.ImpactType;
 import com.acko.insuredassetcredibility.enums.KeyFactors;
 import com.acko.insuredassetcredibility.interfaces.ApplicationService;
@@ -21,9 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Random;
 
 @Service
 @Slf4j
@@ -34,29 +33,35 @@ public class DistanceServiceImpl implements ApplicationService {
 
     @Override
     public List<KeyActivities> getActivities(String assetId, ScoreDao scoreDao) {
-        KeyActivities keyActivities= new KeyActivities();
+        List<KeyActivities> keyActivitiesList = new ArrayList<>();
+        KeyActivities keyActivities = new KeyActivities();
         keyActivities.setActivityId(Activities.OUTSTATION_COMMUTE.name());
+        keyActivities.setUnitOfMeasurement("km");
+        keyActivities.setTotal(50);
         keyActivities.setActivityName(Activities.OUTSTATION_COMMUTE.getActivityId());
-        List<EventData>eventData = new ArrayList<>();
-        eventData.add(this.getFastTagEvent(assetId, LocalDateTime.now(), ServiceUtils.getNewRefreshDate(scoreDao.getRefreshDate())));
+        List<EventData> eventData = new ArrayList<>();
+        EventData fastTagEventData = this.getFastTagEvent(assetId, LocalDateTime.now(), ServiceUtils.getNewRefreshDate(scoreDao.getRefreshDate()));
+        Integer totalOutStationDistance = this.calculateDistance(fastTagEventData);
         keyActivities.setEvents(eventData);
-        return null;
+        keyActivitiesList.add(keyActivities);
+        return keyActivitiesList;
     }
 
-    private EventData getFastTagEvent(String assetId, LocalDateTime from, LocalDateTime to){
+    private Integer calculateDistance(EventData fastTagEventData) {
+        return 0;
+    }
+
+    private EventData getFastTagEvent(String assetId, LocalDateTime from, LocalDateTime to) {
         EventData fastTagEvent = new EventData();
         fastTagEvent.setEventName(Activities.OUTSTATION_COMMUTE.getActivityId());
-        List<OutStationActivity> activities = outStationCommuteRepository.findAllByAssetId(from,to,assetId);
+        List<OutStationActivity> activities = outStationCommuteRepository.findAllByAssetId(from, to, assetId);
         fastTagEvent.setCount(activities.size());
         List<BaseEventData> baseEventDataList = new ArrayList<>();
-        int totalDistance = 0;
-        if(activities.size()>0) {
+        if (activities.size() > 0) {
             for (OutStationActivity outStationActivity : activities) {
                 String tollId = outStationActivity.getTollId();
                 LocalDateTime localDateTime = outStationActivity.getTollEntryDate();
-                //TODO: find the exit Toll of the Toll Id and Calculate distance.
-                totalDistance = totalDistance + new Random().nextInt(100) + 1;
-                baseEventDataList.add(new BaseEventData(tollId,localDateTime));
+                baseEventDataList.add(new BaseEventData(tollId, localDateTime));
 
             }
             fastTagEvent.setEventData(baseEventDataList);
@@ -65,20 +70,40 @@ public class DistanceServiceImpl implements ApplicationService {
 
     }
 
-    private Double calculateScore(KeyActivities keyActivities){
+    private List<String> getRedFlags() {
+        return null;
+    }
+
+    private Double calculateScore(KeyActivities keyActivities) {
         return 0.0;
     }
 
     @Override
     public List<KeyFactorDataScore> getKeyFactorData(String assetId, ScoreDao scoreDao) {
         KeyFactorDataScore keyFactorDataScore = new KeyFactorDataScore();
-        KeyFactorsData  keyFactorsData = new KeyFactorsData();
+        KeyFactorsData keyFactorsData = new KeyFactorsData();
         keyFactorsData.setKeyFactors(KeyFactors.DISTANCE_COMMUTED);
         keyFactorsData.setImpactType(ImpactType.MEDIUM);
         log.info("Getting outstation activity");
-        Double score =this.calculateScore(this.getActivities(assetId,scoreDao).get(0));
+        Double score = this.calculateScore(this.getActivities(assetId, scoreDao).get(0));
         keyFactorDataScore.setScore(score);
-        Double delta =  scoreDao.getKeyFactorScores().get(KeyFactors.DISTANCE_COMMUTED);
-        return null;
+        Double delta = scoreDao.getKeyFactorScores().get(KeyFactors.DISTANCE_COMMUTED);
+        keyFactorsData.setDelta((delta > 0.0 ? "+" : "-") + delta);
+        Double lastScore = scoreDao.getScore();
+        if (score > AppConstants.OUTSTATION_COMMUTE__MONTHLY_THRESHOLD_IN_KM) {
+            keyFactorsData.setUsageCategory(ImpactCategory.POOR);
+        } else if (lastScore < score && score < 500.0) {
+            keyFactorsData.setUsageCategory(ImpactCategory.GOOD);
+        } else if (score < lastScore && score < 500.0) {
+            keyFactorsData.setUsageCategory(ImpactCategory.VERY_GOOD);
+        } else if (score < 200.0 && lastScore < 200.0) {
+            log.info("User has been under threshold for last 90 days.");
+            keyFactorsData.setUsageCategory(ImpactCategory.EXCELLENT);
+        }
+        keyFactorDataScore.setKeyFactorsData(keyFactorsData);
+        keyFactorDataScore.setScore(score);
+        List<KeyFactorDataScore> keyFactorDataScores = new ArrayList<>();
+        keyFactorDataScores.add(keyFactorDataScore);
+        return keyFactorDataScores;
     }
 }

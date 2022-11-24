@@ -7,11 +7,11 @@ package com.acko.insuredassetcredibility.dao;
 
 import com.acko.insuredassetcredibility.enums.FuelType;
 import com.acko.insuredassetcredibility.enums.TransmissionType;
-import com.acko.insuredassetcredibility.models.Insurance;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -19,16 +19,14 @@ import java.util.Date;
 public class RegisteredAssetDao {
     @Id
     private String assetId;
-    private Date ServicingDate;
-    private Date registrationDate;
-    private Insurance insuranceInfo;
+    private String ownerMobile;
+    private String ownerEmail;
+    private LocalDateTime registrationDate;
     private Integer ownershipCount;
     private Boolean isCommercial;
     private String make;
     private String model;
     private String variant;
-    private String variantMarketReleaseDate;
-    private Double brandValueIndia;
     private TransmissionType transmissionType;
     private FuelType fuelType;
 }

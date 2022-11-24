@@ -37,6 +37,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     public AssetScoringResponse getAssetScoringDetails(AssetScoringRequest assetScoringRequest) {
         List<RegisteredAssetDao> registeredAssetList = repository.findAllByOwnerMobileOrOwnerEmail(assetScoringRequest.getMobile(), assetScoringRequest.getEmail());
         AssetScoringResponse assetScoringResponse = new AssetScoringResponse();
+        List<AssetScores> assetScoresList = new ArrayList<>();
         for(RegisteredAssetDao assetDao: registeredAssetList){
             String assetId = assetDao.getAssetId();
             AssetScores assetScores =  new AssetScores();
@@ -44,11 +45,17 @@ public class ApplicationServiceImpl implements ApplicationService {
             assetScores.setAssetId(assetId);
             ScoreDao scoreDao = scoringDataRepository.findScoreDaosByAssetId(assetId);
             assetScores.setKeyActivities(this.getActivities(assetId,scoreDao));
-            assetScores.setKeyFactorsData(this.getKeyFactorData(assetId,scoreDao));
-
+            List<KeyFactorsData>keyFactorsData = new ArrayList<>();
+            List<KeyFactorDataScore>keyFactorDataScores = this.getKeyFactorData(assetId,scoreDao);
+            for(KeyFactorDataScore dataScore : keyFactorDataScores){
+                keyFactorsData.add(dataScore.getKeyFactorsData());
+            }
+            assetScores.setKeyFactorsData(keyFactorsData);
+            assetScoresList.add(assetScores);
 
         }
-        return new AssetScoringResponse();
+        assetScoringResponse.setAssetScoresList(assetScoresList);
+        return assetScoringResponse;
     }
 
 

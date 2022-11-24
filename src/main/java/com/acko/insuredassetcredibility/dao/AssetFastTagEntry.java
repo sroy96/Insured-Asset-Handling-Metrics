@@ -10,6 +10,7 @@ import lombok.NonNull;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -20,5 +21,5 @@ public class AssetFastTagEntry {
     @NonNull
     private String tollId;
     @NonNull
-    private Date recordDate;
+    private LocalDateTime recordDate;
 }

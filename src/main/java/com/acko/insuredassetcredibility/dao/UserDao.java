@@ -22,5 +22,4 @@ public class UserDao {
     private String name;
     private String pincode;
     private Integer age;
-    private String pan;
 }
