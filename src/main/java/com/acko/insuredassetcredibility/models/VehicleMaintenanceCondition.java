@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @Data
 @Builder
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
@@ -16,6 +18,6 @@ public class VehicleMaintenanceCondition {
     private ServicingStatus parkingLightCondition;
     private ServicingStatus leftTurnSignalLightCondition;
     private ServicingStatus airFilterCondition;
-    private Long lastRefreshedTimeMillis;
+    private LocalDateTime lastRefreshedTime;
 
 }
