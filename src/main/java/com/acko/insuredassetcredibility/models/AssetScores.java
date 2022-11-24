@@ -5,6 +5,7 @@
  */
 package com.acko.insuredassetcredibility.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
@@ -23,5 +24,6 @@ public class AssetScores {
     private String assetName;
     private Integer score;
     private List<KeyActivities> keyActivities;
+    @JsonProperty("key_factor")
     private List<KeyFactorsData> keyFactorsData;
 }

@@ -18,4 +18,5 @@ public class AppConstants {
     public static final Integer THRESHOLD_DAYS                                  = 45;
     public static final Integer NO_CHALLAN_BONUS_SCORE                          = 30;
     public static final String NO_CHALLAN_BONUS                                 = "No Challan Bonus";
+    public static final String RESPONSE_DATE_FORMAT                             = "yyyy/MM/dd";
 }

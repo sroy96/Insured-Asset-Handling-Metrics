@@ -5,6 +5,7 @@
  */
 package com.acko.insuredassetcredibility.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
@@ -23,5 +24,6 @@ import java.util.List;
 public class EventData implements Serializable {
     private Integer count;
     private String eventName;
+    @JsonProperty(value = "data")
     private List<BaseEventData> eventData;
 }

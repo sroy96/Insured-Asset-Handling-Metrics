@@ -5,6 +5,8 @@
  */
 package com.acko.insuredassetcredibility.models;
 
+import com.acko.insuredassetcredibility.constants.AppConstants;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,5 +21,6 @@ import java.util.Date;
 @Builder
 public class BaseEventData {
     String name;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = AppConstants.RESPONSE_DATE_FORMAT)
     LocalDateTime date;
 }

@@ -8,6 +8,7 @@ package com.acko.insuredassetcredibility.models;
 import com.acko.insuredassetcredibility.enums.ImpactCategory;
 import com.acko.insuredassetcredibility.enums.ImpactType;
 import com.acko.insuredassetcredibility.enums.KeyFactors;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
@@ -22,7 +23,9 @@ import java.util.Map;
 @AllArgsConstructor
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class KeyFactorsData {
+    @JsonProperty("factor_name")
     private KeyFactors keyFactor;
+    @JsonProperty("impact_type")
     private ImpactType impact;
     private ImpactCategory usageCategory;
     private String delta;
