@@ -120,5 +120,15 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     public void saveAsset(RegisteredAssetDao registeredAssetDao){
         repository.save(registeredAssetDao);
+        ScoreDao scoreDao = new ScoreDao();
+        scoreDao.setScore(1000);
+        Map<KeyFactors,Integer>keyFactorsIntegerMap = new HashMap<>();
+        keyFactorsIntegerMap.put(KeyFactors.DISTANCE_COMMUTED,1000);
+        keyFactorsIntegerMap.put(KeyFactors.SERVICING,1000);
+        keyFactorsIntegerMap.put(KeyFactors.CHALLAN,1000);
+        scoreDao.setKeyFactorScores(keyFactorsIntegerMap);
+        scoreDao.setKeyFactorsData(new ArrayList<>());
+        scoringDataRepository.save(scoreDao);
+
     }
 }

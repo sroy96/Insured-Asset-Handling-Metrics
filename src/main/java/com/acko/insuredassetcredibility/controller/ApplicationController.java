@@ -61,7 +61,7 @@ public class ApplicationController {
 
     }
 
-    @PostMapping("/asset")
+    @PostMapping("/asset/onboarding")
     public void saveAssest(@RequestBody RegisteredAssetDao registeredAssetDao) {
         applicationService.saveAsset(registeredAssetDao);
     }
