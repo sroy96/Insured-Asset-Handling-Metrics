@@ -58,9 +58,9 @@ public class MaintenanceServiceImpl implements ApplicationService {
             endDate = startDate.plusMinutes(AppConstants.REFRESH_PERIOD_MINUTES);
         }
 
-        List<VehicleAccident> vehicleAccident = Objects.isNull(scoreDao) ? vehicleAccidentDao.getVehicleAccident(assetId) : vehicleAccidentRepository.findByAssetIdAndLastRefreshedTimeBetween(assetId, startDate, endDate);
-        List<VehicleRepair> vehicleRepair = Objects.isNull(scoreDao) ? vehicleRepairDao.getVehicleRepair(assetId) : vehicleRepairRepository.findByAssetIdAndLastRefreshedTimeBetween(assetId, startDate, endDate);
-        List<VehicleMaintenanceCondition> vehicleMaintenanceCondition = Objects.isNull(scoreDao) ? vehicleMaintenanceConditionDao.getVehicleMaintenanceCondition(assetId) : vehicleMaintenanceRepository.findByAssetIdAndLastRefreshedTimeBetween(assetId, startDate, endDate);
+        List<VehicleAccident> vehicleAccident = vehicleAccidentDao.getVehicleAccident(assetId);
+        List<VehicleRepair> vehicleRepair = vehicleRepairDao.getVehicleRepair(assetId);
+        List<VehicleMaintenanceCondition> vehicleMaintenanceCondition = vehicleMaintenanceConditionDao.getVehicleMaintenanceCondition(assetId);
 
         List<BaseEventData> accidentBaseEventDataList = new ArrayList<>();
         for (VehicleAccident accident : vehicleAccident) {
