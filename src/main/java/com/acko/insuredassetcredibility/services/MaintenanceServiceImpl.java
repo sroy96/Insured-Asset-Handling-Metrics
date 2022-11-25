@@ -9,6 +9,8 @@ import com.acko.insuredassetcredibility.enums.*;
 import com.acko.insuredassetcredibility.interfaces.ApplicationService;
 import com.acko.insuredassetcredibility.models.*;
 import com.acko.insuredassetcredibility.repository.VehicleAccidentRepository;
+import com.acko.insuredassetcredibility.repository.VehicleMaintenanceRepository;
+import com.acko.insuredassetcredibility.repository.VehicleRepairRepository;
 import com.acko.insuredassetcredibility.utils.scoring.ServicingScoringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,30 +38,62 @@ public class MaintenanceServiceImpl implements ApplicationService {
     @Autowired
     private VehicleMaintenanceConditionDao vehicleMaintenanceConditionDao;
 
+    @Autowired
+    private VehicleAccidentRepository vehicleAccidentRepository;
+
+    @Autowired
+    private VehicleRepairRepository vehicleRepairRepository;
+
+    @Autowired
+    private VehicleMaintenanceRepository vehicleMaintenanceRepository;
     @Override
     public List<KeyActivities> getActivities(String assetId, ScoreDao scoreDao) {
 
-        List<VehicleAccident> vehicleAccident = Objects.isNull(scoreDao) ? vehicleAccidentDao.getVehicleAccident(assetId) : vehicleAccidentDao.getVehicleAccident(assetId).stream().filter(
-                d -> (ChronoUnit.DAYS.between(scoreDao.getRefreshDate(), d.getLastRefreshedTime()) <= AppConstants.REFRESH_PERIOD)
-        ).collect(Collectors.toList());
+        LocalDateTime startDate = null;
+        LocalDateTime endDate = null;
 
-        List<VehicleRepair> vehicleRepair = Objects.isNull(scoreDao) ? vehicleRepairDao.getVehicleRepair(assetId) : vehicleRepairDao.getVehicleRepair(assetId).stream().filter(
-                d -> (ChronoUnit.DAYS.between(scoreDao.getRefreshDate(), d.getLastRefreshedTime()) <= AppConstants.REFRESH_PERIOD)
-        ).collect(Collectors.toList());
+        if (!Objects.isNull(scoreDao)) {
 
-        List<VehicleMaintenanceCondition> vehicleMaintenanceCondition = Objects.isNull(scoreDao) ? vehicleMaintenanceConditionDao.getVehicleMaintenanceCondition(assetId) : vehicleMaintenanceConditionDao.getVehicleMaintenanceCondition(assetId).stream().filter(
-                d -> (ChronoUnit.DAYS.between(scoreDao.getRefreshDate(), d.getLastRefreshedTime()) <= AppConstants.REFRESH_PERIOD)
-        ).collect(Collectors.toList());
+            startDate = scoreDao.getRefreshDate();
+            endDate = startDate.plusMinutes(AppConstants.REFRESH_PERIOD_MINUTES);
+        }
 
-        EventData accident = EventData.builder().eventName(Events.ACCIDENT.getEventName()).count(vehicleAccident.size()).build();
-        EventData repair = EventData.builder().eventName(Events.REPAIR.getEventName()).count(vehicleRepair.size()).build();
-        EventData maintenance = EventData.builder().eventName(Events.MAINTENANCE.getEventName()).count(vehicleMaintenanceCondition.size()).build();
+        List<VehicleAccident> vehicleAccident = Objects.isNull(scoreDao) ? vehicleAccidentDao.getVehicleAccident(assetId) : vehicleAccidentRepository.findByAssetIdAndLastRefreshedTimeBetween(assetId, startDate, endDate);
+        List<VehicleRepair> vehicleRepair = Objects.isNull(scoreDao) ? vehicleRepairDao.getVehicleRepair(assetId) : vehicleRepairRepository.findByAssetIdAndLastRefreshedTimeBetween(assetId, startDate, endDate);
+        List<VehicleMaintenanceCondition> vehicleMaintenanceCondition = Objects.isNull(scoreDao) ? vehicleMaintenanceConditionDao.getVehicleMaintenanceCondition(assetId) : vehicleMaintenanceRepository.findByAssetIdAndLastRefreshedTimeBetween(assetId, startDate, endDate);
+
+        List<BaseEventData> accidentBaseEventDataList = new ArrayList<>();
+        for (VehicleAccident accident : vehicleAccident) {
+
+            BaseEventData data = BaseEventData.builder().name(accident.getServiceCenterName()).date(accident.getLastRefreshedTime()).build();
+            accidentBaseEventDataList.add(data);
+        }
+
+        List<BaseEventData> repairBaseEventDataList = new ArrayList<>();
+        for (VehicleRepair repair : vehicleRepair) {
+
+            BaseEventData data = BaseEventData.builder().name(repair.getServiceCenterName()).date(repair.getLastRefreshedTime()).build();
+            repairBaseEventDataList.add(data);
+        }
+
+        List<BaseEventData> maintenanceBaseEventDataList = new ArrayList<>();
+        for (VehicleMaintenanceCondition maintenance : vehicleMaintenanceCondition) {
+
+            BaseEventData data = BaseEventData.builder().name(maintenance.getServiceCenterName()).date(maintenance.getLastRefreshedTime()).build();
+            maintenanceBaseEventDataList.add(data);
+        }
+
+        EventData accident = EventData.builder().eventName(Events.ACCIDENT.getEventName()).count(vehicleAccident.size()).eventData(accidentBaseEventDataList).build();
+        EventData repair = EventData.builder().eventName(Events.REPAIR.getEventName()).count(vehicleRepair.size()).eventData(repairBaseEventDataList).build();
+        EventData maintenance = EventData.builder().eventName(Events.MAINTENANCE.getEventName()).count(vehicleMaintenanceCondition.size()).eventData(maintenanceBaseEventDataList).build();
 
         List<EventData> events = new ArrayList<>();
         events.add(accident);
         events.add(repair);
         events.add(maintenance);
-        KeyActivities keyActivities = KeyActivities.builder().activityId(Activities.SERVICING.getActivityId()).activityName(Activities.SERVICING.getActivityId()).total(10).events(events).build();
+
+        int count = vehicleAccident.size() + vehicleRepair.size() + vehicleMaintenanceCondition.size();
+        KeyActivities keyActivities = KeyActivities.builder().activityId(Activities.SERVICING.getActivityId()).activityName(Activities.SERVICING.getActivityId()).total(count).unitOfMeasurement("number").events(events).build();
         return Collections.singletonList(keyActivities);
     }
 
@@ -73,7 +107,7 @@ public class MaintenanceServiceImpl implements ApplicationService {
         String delta = "";
         if (deltaConstraint > 0) {
             delta = "-".concat(deltaConstraint.toString());
-        } else {
+        } else if (deltaConstraint < 0) {
             deltaConstraint = Math.abs(deltaConstraint);
             delta = "+".concat(deltaConstraint.toString());
         }
