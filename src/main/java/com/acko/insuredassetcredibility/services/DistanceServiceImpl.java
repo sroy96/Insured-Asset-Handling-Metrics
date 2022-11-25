@@ -122,6 +122,9 @@ public class DistanceServiceImpl implements ApplicationService {
             int currentNumberOfEvents = CollectionUtils.isEmpty(currentFastag.getEvents().get(0).getEventData())?0: currentFastag.getEvents().get(0).getEventData().size();
             int boost = 0;
             int penalize = 0;
+            if(currentNumberOfEvents == 0){
+                boost+=190;
+            }
             if(lastTotal==currentTotal && currentNumberOfEvents==lastNumberOfEvents ){
                 penalize-=50;
             }
@@ -183,16 +186,16 @@ public class DistanceServiceImpl implements ApplicationService {
         else {
             keyFactorsData.setDelta((delta > 0 ? "+" : "-") + Math.abs(delta));
         }
-        if(300<currentScore && currentScore<500){
+        if(300<=currentScore && currentScore<500){
             keyFactorsData.setUsageCategory(ImpactCategory.POOR);
         }
-        if(500<currentScore && currentScore<700){
+        if(500<=currentScore && currentScore<700){
             keyFactorsData.setUsageCategory(ImpactCategory.GOOD);
         }
-        if(700<currentScore && currentScore<900){
+        if(700<=currentScore && currentScore<900){
             keyFactorsData.setUsageCategory(ImpactCategory.VERY_GOOD);
         }
-        if(900<currentScore && currentScore<1000){
+        if(900<=currentScore && currentScore<1000){
             keyFactorsData.setUsageCategory(ImpactCategory.EXCELLENT);
         }
         keyFactorDataScore.setKeyFactorsData(keyFactorsData);
