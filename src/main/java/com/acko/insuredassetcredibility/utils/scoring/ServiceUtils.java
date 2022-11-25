@@ -12,7 +12,7 @@ import java.time.format.DateTimeFormatter;
 
 public class ServiceUtils {
 
-    public static LocalDateTime getNewRefreshDate(LocalDateTime lastRefreshDate){
+    public static LocalDateTime getNewRefreshDate(){
         DateTimeFormatter format =
                 DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
