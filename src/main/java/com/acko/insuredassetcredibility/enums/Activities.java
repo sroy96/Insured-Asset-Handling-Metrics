@@ -11,10 +11,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public enum Activities {
-    OUTSTATION_COMMUTE("outstation"),
+    FASTAG("fastag"),
     CHALLANS("challan"),
     SERVICING("service"),
-    ODOMETER_READING("odometre");
+    ODOMETER_READING("odometre"),
+    OUTSTATION_COMMUTE("outstation");
 
     private String activityId;
 

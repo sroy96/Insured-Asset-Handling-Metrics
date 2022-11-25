@@ -267,8 +267,8 @@ public class ServicingScoringUtil {
 
     public ImpactCategory getUsageImpact(Integer deltaConstraint) {
 
-        if (deltaConstraint > 0) return ImpactCategory.EXCELLENT;
-        else if (deltaConstraint > -30) return ImpactCategory.GOOD;
+        if (deltaConstraint < -30) return ImpactCategory.EXCELLENT;
+        else if (deltaConstraint <= 0) return ImpactCategory.GOOD;
         else return ImpactCategory.POOR;
     }
 }

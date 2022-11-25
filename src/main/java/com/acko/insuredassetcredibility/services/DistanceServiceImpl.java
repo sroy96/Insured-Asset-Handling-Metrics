@@ -45,7 +45,7 @@ public class DistanceServiceImpl implements ApplicationService {
         keyActivities.setActivityName(Activities.OUTSTATION_COMMUTE.getActivityId());
         List<EventData> eventData = new ArrayList<>();
         //TODO: refresh date
-        EventData fastTagEventData = this.getFastTagEvent(assetId, ServiceUtils.getNewRefreshDate(scoreDao.getRefreshDate()),LocalDateTime.now());
+        EventData fastTagEventData = this.getFastTagEvent(assetId, ServiceUtils.getNewRefreshDate(),LocalDateTime.now());
         Double totalOutStationDistance = this.calculateDistance(fastTagEventData);
         keyActivities.setTotal((int)Math.round(totalOutStationDistance));
         eventData.add(fastTagEventData);
@@ -78,7 +78,7 @@ public class DistanceServiceImpl implements ApplicationService {
 
     private EventData getFastTagEvent(String assetId, LocalDateTime from, LocalDateTime to) {
         EventData fastTagEvent = new EventData();
-        fastTagEvent.setEventName(Activities.OUTSTATION_COMMUTE.getActivityId());
+        fastTagEvent.setEventName(Activities.FASTAG.getActivityId());
         List<OutStationActivity> activities = outStationCommuteRepository.findAllByAssetIdAndTollEntryDateBetween(assetId,from,to);
         fastTagEvent.setCount(activities.size());
         List<BaseEventData> baseEventDataList = new ArrayList<>();
@@ -116,9 +116,9 @@ public class DistanceServiceImpl implements ApplicationService {
         }
         if(null!=currentFastag) {
             int lastTotal = fastTag!=null ? fastTag.getTotal() : 0;
-            int lastNumberOfEvents =fastTag!=null ? fastTag.getEvents().size():0;
+            int lastNumberOfEvents =fastTag!=null ? fastTag.getEvents().get(0).getEventData().size():0;
             int currentTotal = currentFastag.getTotal();
-            int currentNumberOfEvents =  currentFastag.getEvents().size();
+            int currentNumberOfEvents =  currentFastag.getEvents().get(0).getEventData().size();
             int boost = 0;
             int penalize = 0;
             if(lastTotal==currentTotal && currentNumberOfEvents==lastNumberOfEvents ){
@@ -127,11 +127,14 @@ public class DistanceServiceImpl implements ApplicationService {
             if(lastTotal==currentTotal && currentNumberOfEvents<lastNumberOfEvents){
                 penalize-=70;
             }
+            if(lastTotal==currentTotal && currentNumberOfEvents > lastNumberOfEvents){
+                penalize-=40;
+            }
             if(lastTotal<currentTotal){
-                penalize+=20;
+                penalize-=20;
             }
             if(lastTotal<currentTotal && lastNumberOfEvents<currentNumberOfEvents){
-                penalize+=40;
+                penalize-=40;
             }
             if(lastTotal>currentTotal && lastNumberOfEvents>currentNumberOfEvents && currentTotal<AppConstants.OUTSTATION_COMMUTE__MONTHLY_THRESHOLD_IN_KM){
                 boost+=30;
@@ -143,12 +146,13 @@ public class DistanceServiceImpl implements ApplicationService {
                 boost+=10;
             }
             if(lastTotal<currentTotal && currentTotal>AppConstants.OUTSTATION_COMMUTE__MONTHLY_THRESHOLD_IN_KM){
-                penalize+=45;
+                penalize-=45;
             }
             if(lastTotal<currentTotal && currentTotal<AppConstants.OUTSTATION_COMMUTE__MONTHLY_THRESHOLD_IN_KM && lastNumberOfEvents<currentNumberOfEvents){
-                penalize+=35;
+                penalize-=35;
             }
-            int currentScore = scoreDao.getKeyFactorScores().get(KeyFactors.DISTANCE)!=null?scoreDao.getKeyFactorScores().get(KeyFactors.DISTANCE):1000 + boost - penalize;
+            int currentScore = scoreDao.getKeyFactorScores().get(KeyFactors.DISTANCE)!=null?scoreDao.getKeyFactorScores().get(KeyFactors.DISTANCE):1000;
+            currentScore= currentScore+ boost + penalize;
             if(currentScore<=300){
                 return 300;
             }
