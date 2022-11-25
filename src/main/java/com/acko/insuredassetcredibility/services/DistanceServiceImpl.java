@@ -21,6 +21,7 @@ import com.acko.insuredassetcredibility.utils.scoring.ServiceUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -116,9 +117,9 @@ public class DistanceServiceImpl implements ApplicationService {
         }
         if(null!=currentFastag) {
             int lastTotal = fastTag!=null ? fastTag.getTotal() : 0;
-            int lastNumberOfEvents =fastTag!=null ? fastTag.getEvents().get(0).getEventData().size():0;
+            int lastNumberOfEvents =fastTag!=null ?  fastTag.getEvents().get(0).getEventData() ==null?0: fastTag.getEvents().get(0).getEventData().size():0;
             int currentTotal = currentFastag.getTotal();
-            int currentNumberOfEvents =  currentFastag.getEvents().get(0).getEventData().size();
+            int currentNumberOfEvents = CollectionUtils.isEmpty(currentFastag.getEvents().get(0).getEventData())?0: currentFastag.getEvents().get(0).getEventData().size();
             int boost = 0;
             int penalize = 0;
             if(lastTotal==currentTotal && currentNumberOfEvents==lastNumberOfEvents ){
