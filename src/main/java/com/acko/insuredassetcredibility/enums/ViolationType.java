@@ -13,6 +13,7 @@ public enum ViolationType {
   OVER_SPEEDING("Over Speeding",-20,ImpactType.MEDIUM),
   SIGNAL_JUMPING("Signal jumping",-20,ImpactType.LOW),
   RIDING_WITHOUT_HELMET("Riding without helmet",-5,ImpactType.LOW),
+  BONUS_SCORE("Bonus score",50,ImpactType.LOW),
   NO_PARKING("No parking",-10,ImpactType.LOW);
 
   private final String name;

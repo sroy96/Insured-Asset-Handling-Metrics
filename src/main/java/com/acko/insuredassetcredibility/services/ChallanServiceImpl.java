@@ -9,6 +9,7 @@ import com.acko.insuredassetcredibility.models.*;
 import com.acko.insuredassetcredibility.repository.ChallanRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
@@ -28,7 +29,7 @@ public class ChallanServiceImpl implements ApplicationService {
 
     int totalCount = 0;
     List<ChallanDao> challanDaos = null;
-    if (Objects.isNull(scoreDao)) {
+    if (Objects.isNull(scoreDao) || CollectionUtils.isEmpty(scoreDao.getActivitiesList())) {
       challanDaos = challanRepository.findByAssetId(assetId);
     }
     else {
@@ -59,14 +60,13 @@ public class ChallanServiceImpl implements ApplicationService {
         }
         totalCount++;
       }
-
     }
 
     List<EventData> eventDataList = new ArrayList<>();
     for (Map.Entry<String,EventData> eventData:eventDataMap.entrySet()){
       eventDataList.add(eventData.getValue());
     }
-    KeyActivities keyActivities = KeyActivities.builder().activityId(Activities.CHALLANS.getActivityId())
+    KeyActivities keyActivities = KeyActivities.builder().activityId(Activities.CHALLANS.name())
         .activityName(Activities.CHALLANS.getActivityId()).total(totalCount).unitOfMeasurement("number").events(eventDataList).build();
     return Collections.singletonList(keyActivities);
   }
@@ -102,8 +102,10 @@ public class ChallanServiceImpl implements ApplicationService {
     }
     if (initialScore.equals(calculatedScore) ){
       calculatedScore = calculatedScore + AppConstants.NO_CHALLAN_BONUS_SCORE;
+      totalEvents++;
     }
-    calculatedScore = calculatedScore>AppConstants.BASE_SCORE?AppConstants.BASE_SCORE:calculatedScore;
+    calculatedScore = calculatedScore>AppConstants.MAX_SCORE?AppConstants.MAX_SCORE:calculatedScore;
+    calculatedScore = calculatedScore<AppConstants.MIN_SCORE?AppConstants.MIN_SCORE:calculatedScore;
     Integer delta = calculatedScore - initialScore;
     KeyFactorsData keyFactorsData = new KeyFactorsData();
     keyFactorsData.setDelta(delta>0? "+".concat(delta.toString()) :delta.toString());

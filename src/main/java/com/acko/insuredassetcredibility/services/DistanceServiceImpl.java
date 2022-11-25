@@ -57,6 +57,9 @@ public class DistanceServiceImpl implements ApplicationService {
     private Double calculateDistance(EventData fastTagEventData) {
         List<BaseEventData> eventData = fastTagEventData.getEventData();
         double totalCalculate = 0.0;
+        if (eventData == null){
+            return totalCalculate;
+        }
         for(BaseEventData data: eventData){
             String entryTollId =  data.getName();
             com.acko.insuredassetcredibility.dao.NationalTollRegistry entryTollInfo = registry.findByTollId(entryTollId);
@@ -99,9 +102,11 @@ public class DistanceServiceImpl implements ApplicationService {
         List<KeyActivities>activities = scoreDao.getActivitiesList();
         KeyActivities fastTag = null;
         KeyActivities currentFastag = null;
-        for(KeyActivities lastActivities: activities){
-            if(Activities.OUTSTATION_COMMUTE.name().equals(lastActivities.getActivityId())){
-                fastTag = lastActivities;
+        if (activities != null) {
+            for (KeyActivities lastActivities : activities) {
+                if (Activities.OUTSTATION_COMMUTE.name().equals(lastActivities.getActivityId())) {
+                    fastTag = lastActivities;
+                }
             }
         }
         for(KeyActivities currentActivity: keyActivities){
@@ -165,7 +170,7 @@ public class DistanceServiceImpl implements ApplicationService {
         keyFactorsData.setTotal(keyActivities.get(0).getTotal());
         int currentScore = this.calculateScore(keyActivities,scoreDao);
         keyFactorDataScore.setScore(currentScore);
-        Integer lastScore = scoreDao.getKeyFactorScores().get(KeyFactors.DISTANCE)!=null? scoreDao.getKeyFactorScores().get(KeyFactors.DISTANCE): 1000;
+        Integer lastScore = scoreDao.getKeyFactorScores().get(KeyFactors.DISTANCE)!=null? scoreDao.getKeyFactorScores().get(KeyFactors.DISTANCE): AppConstants.BASE_SCORE;
         int delta = currentScore-lastScore;
         if(delta==0){
             keyFactorsData.setDelta("0");
