@@ -49,13 +49,15 @@ public class ServicingScoringUtil {
         this.getVehicleAccidentScore(assetId, currDate);
         this.getVehicleRepairScore(assetId, currDate);
         this.getVehicleMaintenanceConditionScore(assetId, currDate);
-        return Math.min(lastUpdatedScore, calculatedScore);
+        if (calculatedScore < AppConstants.MIN_SCORE) return AppConstants.MIN_SCORE;
+        else if (calculatedScore > AppConstants.MAX_SCORE) return AppConstants.MAX_SCORE;
+        else return calculatedScore;
     }
 
     private Integer getVehicleAccidentScore(String assetId, LocalDateTime currDate) {
 
         List<VehicleAccident> vehicleAccident = vehicleAccidentDao.getVehicleAccident(assetId).stream().filter(
-                d -> (ChronoUnit.DAYS.between(currDate, d.getLastRefreshedTime()) <= AppConstants.REFRESH_PERIOD)
+                d -> (ChronoUnit.MINUTES.between(currDate, d.getLastRefreshedTime()) <= AppConstants.REFRESH_PERIOD_MINUTES)
         ).collect(Collectors.toList());
 
         for (VehicleAccident accidentData : vehicleAccident) {
@@ -70,7 +72,7 @@ public class ServicingScoringUtil {
     private Integer getVehicleRepairScore(String assetId, LocalDateTime currDate) {
 
         List<VehicleRepair> vehicleRepair = vehicleRepairDao.getVehicleRepair(assetId).stream().filter(
-                d -> (ChronoUnit.DAYS.between(currDate, d.getLastRefreshedTime()) <= AppConstants.REFRESH_PERIOD)
+                d -> (ChronoUnit.MINUTES.between(currDate, d.getLastRefreshedTime()) <= AppConstants.REFRESH_PERIOD_MINUTES)
         ).collect(Collectors.toList());
 
         int noOfTimesEngineOilChanged = 0;
@@ -217,7 +219,7 @@ public class ServicingScoringUtil {
     private Integer getVehicleMaintenanceConditionScore(String assetId, LocalDateTime currDate) {
 
         List<VehicleMaintenanceCondition> vehicleMaintenanceCondition = vehicleMaintenanceConditionDao.getVehicleMaintenanceCondition(assetId).stream().filter(
-                d -> (ChronoUnit.DAYS.between(currDate, d.getLastRefreshedTime()) <= AppConstants.REFRESH_PERIOD)
+                d -> (ChronoUnit.MINUTES.between(currDate, d.getLastRefreshedTime()) <= AppConstants.REFRESH_PERIOD_MINUTES)
         ).collect(Collectors.toList());
 
         for (VehicleMaintenanceCondition maintenanceConditionData : vehicleMaintenanceCondition) {
