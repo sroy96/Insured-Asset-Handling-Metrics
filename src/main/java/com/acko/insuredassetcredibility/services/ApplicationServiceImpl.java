@@ -103,10 +103,9 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public List<KeyActivities> getActivities(String assetId, ScoreDao scoreDao) {
         List<KeyActivities>keyActivities = new ArrayList<>();
-        //keyActivities.addAll(maintenanceService.getActivities(assetId,scoreDao));
-
         keyActivities.addAll(challanService.getActivities(assetId,scoreDao));
-        keyActivities.addAll(distanceService.getActivities(assetId,scoreDao));
+        keyActivities.addAll(maintenanceService.getActivities(assetId,scoreDao));
+      //  keyActivities.addAll(distanceService.getActivities(assetId,scoreDao));
         return keyActivities;
     }
 
@@ -114,8 +113,8 @@ public class ApplicationServiceImpl implements ApplicationService {
     public List<KeyFactorDataScore> getKeyFactorData(String assetId, ScoreDao scoreDao) {
         List<KeyFactorDataScore> keyFactorDataScoreList = new ArrayList<>();
         keyFactorDataScoreList.addAll(challanService.getKeyFactorData(assetId,scoreDao));
-        keyFactorDataScoreList.addAll(distanceService.getKeyFactorData(assetId,scoreDao));
-   //     keyFactorDataScoreList.addAll(maintenanceService.getKeyFactorData(assetId, scoreDao));
+       // keyFactorDataScoreList.addAll(distanceService.getKeyFactorData(assetId,scoreDao));
+        keyFactorDataScoreList.addAll(maintenanceService.getKeyFactorData(assetId, scoreDao));
         return keyFactorDataScoreList;
     }
 
