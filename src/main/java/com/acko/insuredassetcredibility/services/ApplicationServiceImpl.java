@@ -54,6 +54,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
 
     public AssetScoringResponse getAssetScoringDetails(String phone) {
+        phone = "7411630380";
         List<RegisteredAssetDao> registeredAssetList = repository.findAllByOwnerMobile(phone);
         AssetScoringResponse assetScoringResponse = new AssetScoringResponse();
         List<AssetScores> assetScoresList = new ArrayList<>();
