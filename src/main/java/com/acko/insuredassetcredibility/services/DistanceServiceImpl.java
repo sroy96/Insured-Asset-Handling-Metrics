@@ -143,7 +143,7 @@ public class DistanceServiceImpl implements ApplicationService {
             if(lastTotal<currentTotal && currentTotal<AppConstants.OUTSTATION_COMMUTE__MONTHLY_THRESHOLD_IN_KM && lastNumberOfEvents<currentNumberOfEvents){
                 penalize+=35;
             }
-            int currentScore = scoreDao.getKeyFactorScores().get(KeyFactors.DISTANCE_COMMUTED)!=null?scoreDao.getKeyFactorScores().get(KeyFactors.DISTANCE_COMMUTED):1000 + boost - penalize;
+            int currentScore = scoreDao.getKeyFactorScores().get(KeyFactors.DISTANCE)!=null?scoreDao.getKeyFactorScores().get(KeyFactors.DISTANCE):1000 + boost - penalize;
             if(currentScore<=300){
                 return 300;
             }
@@ -158,16 +158,21 @@ public class DistanceServiceImpl implements ApplicationService {
     public List<KeyFactorDataScore> getKeyFactorData(String assetId, ScoreDao scoreDao) {
         KeyFactorDataScore keyFactorDataScore = new KeyFactorDataScore();
         KeyFactorsData keyFactorsData = new KeyFactorsData();
-        keyFactorsData.setKeyFactor(KeyFactors.DISTANCE_COMMUTED);
+        keyFactorsData.setKeyFactor(KeyFactors.DISTANCE);
         keyFactorsData.setImpact(ImpactType.HIGH);
         log.info("Getting outstation activity");
         List<KeyActivities> keyActivities = this.getActivities(assetId, scoreDao);
         keyFactorsData.setTotal(keyActivities.get(0).getTotal());
         int currentScore = this.calculateScore(keyActivities,scoreDao);
         keyFactorDataScore.setScore(currentScore);
-        Integer lastScore = scoreDao.getKeyFactorScores().get(KeyFactors.DISTANCE_COMMUTED)!=null? scoreDao.getKeyFactorScores().get(KeyFactors.DISTANCE_COMMUTED): 1000;
+        Integer lastScore = scoreDao.getKeyFactorScores().get(KeyFactors.DISTANCE)!=null? scoreDao.getKeyFactorScores().get(KeyFactors.DISTANCE): 1000;
         int delta = currentScore-lastScore;
-        keyFactorsData.setDelta((delta > 0.0 ? "+" : "-") + Math.abs(delta));
+        if(delta==0){
+            keyFactorsData.setDelta("0");
+        }
+        else {
+            keyFactorsData.setDelta((delta > 0 ? "+" : "-") + Math.abs(delta));
+        }
         if(300<currentScore && currentScore<500){
             keyFactorsData.setUsageCategory(ImpactCategory.POOR);
         }

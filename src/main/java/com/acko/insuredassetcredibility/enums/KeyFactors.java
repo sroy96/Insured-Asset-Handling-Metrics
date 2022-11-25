@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 @AllArgsConstructor
 public enum KeyFactors {
     CHALLAN("challan",0.3),
-    DISTANCE_COMMUTED("distance_commute",0.6),
+    DISTANCE("distance",0.6),
     SERVICING("servicing",0.1),
     CLAIMS("claims",0.0),
     FIR("FIR",0.0);

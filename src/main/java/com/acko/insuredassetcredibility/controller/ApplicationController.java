@@ -9,6 +9,7 @@ import com.acko.insuredassetcredibility.dao.ChallanDao;
 import com.acko.insuredassetcredibility.dao.NationalTollRegistry;
 import com.acko.insuredassetcredibility.dao.acitivity.OutStationActivity;
 import com.acko.insuredassetcredibility.dao.RegisteredAssetDao;
+import com.acko.insuredassetcredibility.dto.requests.AckathonDTO;
 import com.acko.insuredassetcredibility.dto.requests.AssetScoringRequest;
 import com.acko.insuredassetcredibility.dto.responses.AssetScoringResponse;
 import com.acko.insuredassetcredibility.models.KeyActivities;
@@ -65,5 +66,13 @@ public class ApplicationController {
     public void saveAssest(@RequestBody RegisteredAssetDao registeredAssetDao) {
         applicationService.saveAsset(registeredAssetDao);
     }
+
+    @PostMapping("/hack")
+    public ResponseEntity<HttpStatus> createActivities(@RequestBody AckathonDTO ackathonDTO){
+        applicationService.saveActivities(ackathonDTO);
+        return new ResponseEntity<>(HttpStatus.OK);
+
+    }
+
 
 }

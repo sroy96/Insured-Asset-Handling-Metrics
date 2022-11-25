@@ -8,6 +8,8 @@ package com.acko.insuredassetcredibility.services;
 import com.acko.insuredassetcredibility.constants.AppConstants;
 import com.acko.insuredassetcredibility.dao.RegisteredAssetDao;
 import com.acko.insuredassetcredibility.dao.ScoreDao;
+import com.acko.insuredassetcredibility.dao.acitivity.OutStationActivity;
+import com.acko.insuredassetcredibility.dto.requests.AckathonDTO;
 import com.acko.insuredassetcredibility.dto.requests.AssetScoringRequest;
 import com.acko.insuredassetcredibility.dto.responses.AssetScoringResponse;
 import com.acko.insuredassetcredibility.enums.Activities;
@@ -17,6 +19,7 @@ import com.acko.insuredassetcredibility.models.AssetScores;
 import com.acko.insuredassetcredibility.models.KeyActivities;
 import com.acko.insuredassetcredibility.models.KeyFactorDataScore;
 import com.acko.insuredassetcredibility.models.KeyFactorsData;
+import com.acko.insuredassetcredibility.repository.OutStationCommuteRepository;
 import com.acko.insuredassetcredibility.repository.RegisteredAssetRepository;
 import com.acko.insuredassetcredibility.repository.ScoringDataRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +39,9 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Autowired
     ScoringDataRepository scoringDataRepository;
+
+    @Autowired
+    OutStationCommuteRepository outStationCommuteRepository;
 
     @Autowired
     ChallanServiceImpl challanService;
@@ -58,13 +64,13 @@ public class ApplicationServiceImpl implements ApplicationService {
             assetScores.setAssetName(assetDao.getMake() +"-" + assetDao.getModel());
             assetScores.setAssetId(assetId);
             ScoreDao scoreDao = scoringDataRepository.findScoreDaosByAssetId(assetId);
-            if (!Objects.isNull(scoreDao) &&  ChronoUnit.MINUTES.between(scoreDao.getRefreshDate(), LocalDateTime.now()) < AppConstants.REFRESH_PERIOD_MINUTES) {
-                assetScores.setScore(scoreDao.getScore());
-                assetScores.setKeyActivities(scoreDao.getActivitiesList());
-                assetScores.setKeyFactorsData(scoreDao.getKeyFactorsData());
-                assetScoresList.add(assetScores);
-                continue;
-            }
+//            if (!Objects.isNull(scoreDao) &&  ChronoUnit.MINUTES.between(scoreDao.getRefreshDate(), LocalDateTime.now()) < AppConstants.REFRESH_PERIOD_MINUTES) {
+//                assetScores.setScore(scoreDao.getScore());
+//                assetScores.setKeyActivities(scoreDao.getActivitiesList());
+//                assetScores.setKeyFactorsData(scoreDao.getKeyFactorsData());
+//                assetScoresList.add(assetScores);
+//                continue;
+//            }
 
             List<KeyActivities> keyActivitiesList =this.getActivities(assetId,scoreDao);
             List<KeyFactorDataScore> keyFactorDataScores = this.getKeyFactorData(assetId,scoreDao);
@@ -84,7 +90,9 @@ public class ApplicationServiceImpl implements ApplicationService {
             if(finalScore<300){
                 finalScore=300;
             }
-            finalScore = Math.min(1000,finalScore);
+            else {
+                finalScore = Math.min(1000, finalScore);
+            }
             scoreDao.setKeyFactorsData(keyFactorsData);
             assetScores.setKeyFactorsData(keyFactorsData);
             assetScores.setScore((int)finalScore);
@@ -105,7 +113,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         List<KeyActivities>keyActivities = new ArrayList<>();
         keyActivities.addAll(challanService.getActivities(assetId,scoreDao));
         keyActivities.addAll(maintenanceService.getActivities(assetId,scoreDao));
-      //  keyActivities.addAll(distanceService.getActivities(assetId,scoreDao));
+        keyActivities.addAll(distanceService.getActivities(assetId,scoreDao));
         return keyActivities;
     }
 
@@ -113,7 +121,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     public List<KeyFactorDataScore> getKeyFactorData(String assetId, ScoreDao scoreDao) {
         List<KeyFactorDataScore> keyFactorDataScoreList = new ArrayList<>();
         keyFactorDataScoreList.addAll(challanService.getKeyFactorData(assetId,scoreDao));
-       // keyFactorDataScoreList.addAll(distanceService.getKeyFactorData(assetId,scoreDao));
+        keyFactorDataScoreList.addAll(distanceService.getKeyFactorData(assetId,scoreDao));
         keyFactorDataScoreList.addAll(maintenanceService.getKeyFactorData(assetId, scoreDao));
         return keyFactorDataScoreList;
     }
@@ -123,12 +131,20 @@ public class ApplicationServiceImpl implements ApplicationService {
         ScoreDao scoreDao = new ScoreDao();
         scoreDao.setScore(1000);
         Map<KeyFactors,Integer>keyFactorsIntegerMap = new HashMap<>();
-        keyFactorsIntegerMap.put(KeyFactors.DISTANCE_COMMUTED,1000);
+        keyFactorsIntegerMap.put(KeyFactors.DISTANCE,1000);
         keyFactorsIntegerMap.put(KeyFactors.SERVICING,1000);
         keyFactorsIntegerMap.put(KeyFactors.CHALLAN,1000);
         scoreDao.setKeyFactorScores(keyFactorsIntegerMap);
         scoreDao.setKeyFactorsData(new ArrayList<>());
         scoringDataRepository.save(scoreDao);
+    }
+
+    public void saveActivities(AckathonDTO ackathonDTO) {
+//        List<OutStationActivity> outStationActivity = ackathonDTO.getOutStation();
+//        for(OutStationActivity activity: outStationActivity){
 
     }
-}
+
+
+    }
+
