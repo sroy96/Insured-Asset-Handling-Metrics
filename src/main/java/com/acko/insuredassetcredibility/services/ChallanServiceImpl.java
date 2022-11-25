@@ -28,15 +28,8 @@ public class ChallanServiceImpl implements ApplicationService {
     Map<String, EventData> eventDataMap = new HashMap<>();
 
     int totalCount = 0;
-    List<ChallanDao> challanDaos = null;
-    if (Objects.isNull(scoreDao) || CollectionUtils.isEmpty(scoreDao.getActivitiesList())) {
-      challanDaos = challanRepository.findByAssetId(assetId);
-    }
-    else {
-      LocalDateTime startDate = scoreDao.getRefreshDate();
-      LocalDateTime endDate = startDate.plusMinutes(AppConstants.REFRESH_PERIOD_MINUTES);
-      challanDaos = challanRepository.findByAssetIdAndUpdatedDateBetween(assetId, startDate, endDate);
-    }
+    List<ChallanDao> challanDaos = challanRepository.findByAssetId(assetId);;
+
 
 
     for (ChallanDao challanDao:challanDaos){
@@ -74,24 +67,19 @@ public class ChallanServiceImpl implements ApplicationService {
   @Override
   public List<KeyFactorDataScore> getKeyFactorData(String assetId, ScoreDao scoreDao) {
     Integer initialScore = null;
-    List<ChallanDao> challanDaos = null;
-    if (Objects.isNull(scoreDao)) {
-      initialScore = AppConstants.BASE_SCORE;
-      challanDaos = challanRepository.findByAssetId(assetId);
-    }
-    else {
-      initialScore =  Objects.isNull(scoreDao.getKeyFactorScores())? AppConstants.BASE_SCORE : scoreDao.getKeyFactorScores().get(KeyFactors.CHALLAN);
-      LocalDateTime startDate = scoreDao.getRefreshDate();
-      LocalDateTime endDate = startDate.plusMinutes(AppConstants.REFRESH_PERIOD_MINUTES);
-      challanDaos = challanRepository.findByAssetIdAndUpdatedDateBetween(assetId,startDate,endDate);
+    List<ChallanDao> challanDaos = challanRepository.findByAssetId(assetId);;
 
-    }
-    Integer calculatedScore = initialScore;
 //    String lastDeltaStr = scoreDao.getKeyFactorsData().stream().filter(keyFactorsData -> keyFactorsData
 //        .getFactorName().equals(Activities.CHALLANS.getActivity_id())).findFirst().get().getDelta();
 //    Integer lastDelta = Integer.valueOf(lastDeltaStr);
 
+    if (Objects.isNull(scoreDao)){
+      initialScore = AppConstants.BASE_SCORE;
+    }else {
+      initialScore = Objects.isNull(scoreDao.getKeyFactorScores())?AppConstants.BASE_SCORE: scoreDao.getKeyFactorScores().get(KeyFactors.CHALLAN);
+    }
 
+    Integer calculatedScore = initialScore;
     int totalEvents = 0;
     for (ChallanDao challanDao:challanDaos){
       for (ViolationDetail violationDetail:challanDao.getViolationDetails()){
@@ -99,10 +87,6 @@ public class ChallanServiceImpl implements ApplicationService {
             ViolationType.get(violationDetail.getOffense()).getScore());
         totalEvents++;
       }
-    }
-    if (initialScore.equals(calculatedScore) ){
-      calculatedScore = calculatedScore + AppConstants.NO_CHALLAN_BONUS_SCORE;
-      totalEvents++;
     }
     calculatedScore = calculatedScore>AppConstants.MAX_SCORE?AppConstants.MAX_SCORE:calculatedScore;
     calculatedScore = calculatedScore<AppConstants.MIN_SCORE?AppConstants.MIN_SCORE:calculatedScore;

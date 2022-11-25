@@ -9,7 +9,7 @@ import java.util.HashMap;
 @Getter
 public enum ViolationType {
 
-  DRINK_AND_DRIVE("Drink and Drive",-100,ImpactType.HIGH),
+  DRINK_AND_DRIVE("Drink and Drive",-50,ImpactType.HIGH),
   OVER_SPEEDING("Over Speeding",-20,ImpactType.MEDIUM),
   SIGNAL_JUMPING("Signal jumping",-20,ImpactType.LOW),
   RIDING_WITHOUT_HELMET("Riding without helmet",-5,ImpactType.LOW),
