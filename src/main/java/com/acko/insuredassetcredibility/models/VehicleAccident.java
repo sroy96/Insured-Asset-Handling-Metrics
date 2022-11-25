@@ -11,12 +11,14 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
 
 @Data
+@Builder
 @AllArgsConstructor
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 @Document("accidents")
 public class VehicleAccident {
 
     @Id
+    private String serviceCenterName;
     private String assetId;
     private LocalDateTime majorAccidentDate;
     private LocalDateTime minorAccidentDate;
